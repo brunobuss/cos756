@@ -252,8 +252,8 @@ void houghC1(Mat &gray, int minr, int maxr , int cannyt, vector<acmPoint> &outpu
 
 int main(int, char**)
 {
-    VideoCapture cap("embx.flv"); // open the default camera
-    if(!cap.isOpened())  // check if we succeeded
+    VideoCapture cap("./arquivoTeste/embx.flv"); 
+    if(!cap.isOpened()) 
         return -1;
 
     Mat gray,frame,gray2;
@@ -263,7 +263,7 @@ int main(int, char**)
     for(;;)
     {
                         
-        cap >> frame; // get a new frame from camera
+        cap >> frame;
 
         
         cvtColor(frame, gray, CV_BGR2GRAY);
@@ -292,6 +292,6 @@ int main(int, char**)
 		
 		
     }
-    // the camera will be deinitialized automatically in VideoCapture destructor
+    
     return 0;
 }

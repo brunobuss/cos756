@@ -258,10 +258,8 @@ int main(){
 
 	int i;
 	
-	Mat img = imread("testeImg6.jpeg",1),gray;
-//	img = img(Range(100,200),Range(100,400));
-	img = img(Range(100,160),Range(100,170));
-//	img = img(Range(160,200),Range(140,170));
+	Mat img = imread("./arquivoTeste/testeImg6.jpeg",1),gray;
+
 	cvtColor(img,gray,CV_BGR2GRAY);
 	GaussianBlur(gray, gray, Size(5,5), 1.5, 1.5);
 	
