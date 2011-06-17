@@ -271,7 +271,7 @@ int main(int, char**)
         
         GaussianBlur(gray, gray, Size(5,5), 1.5, 1.5);
         
-		houghC1(gray,5,25,120,circles,5);
+		houghC1(gray,5,30,80,circles,1);
 		
 		for(unsigned int i=0; i<circles.size();i++){
 			printf("%lf %d %d %d\n",circles[i].vnorm,circles[i].rad,circles[i].cx,circles[i].cy);
@@ -280,11 +280,11 @@ int main(int, char**)
 		
         imshow("video", frame);
         
-        char ch = waitKey();
+        char ch = waitKey(1);
         if(ch >= 0){
         	if(ch == 'a'){         		
-        		imwrite("testeImg6.jpeg",gray2);
-        		imwrite("verificador6.jpeg",frame);
+        		imwrite("testeImg7.jpeg",gray2);
+        		imwrite("verificador7.jpeg",frame);
         	}
         	if(ch == 'q')
         		break;
