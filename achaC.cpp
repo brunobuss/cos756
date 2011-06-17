@@ -12,7 +12,6 @@
 
 #include<set>
 
-a
 
 using namespace std;
 using namespace cv;
