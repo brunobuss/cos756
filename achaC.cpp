@@ -269,7 +269,7 @@ int main(){
 	
 	vector<acmPoint> circles;
 	
-	houghC1(gray,5,25,120,circles,1);
+	houghC1(gray,5,25,120,circles,8);
 	
 	
 	for(i=0;(unsigned int) i<circles.size();i++){
