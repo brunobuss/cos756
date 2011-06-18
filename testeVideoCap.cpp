@@ -43,10 +43,14 @@ double pi = acos(-1.0);
 struct acmPoint{
 	double vnorm; // valor normalizado da votação
 	int rad,cx,cy; // raio, centro (cx,cy)
+	bool inic;
+	
+	acmPoint(){inic = false;}
 	
 	acmPoint(int rad_, int cx_,int cy_, double vnorm_ = 0){
 		rad = rad_; cx = cx_; cy = cy_;
 		vnorm = vnorm_;
+		inic = true;
 	}
 	
 	inline bool operator< (const acmPoint &p) const{
@@ -168,7 +172,7 @@ double calcVNorm(int **m,int x,int y,int nx,int ny,int rad){
 			}
 		}
 		
-	vnorm = vnorm/(sumVNormMask*2*pi*rad);
+	vnorm = vnorm/(sumVNormMask*(2*pi)*rad);
 	return vnorm;
 				
 }
@@ -248,7 +252,70 @@ void houghC1(Mat &gray, int minr, int maxr , int cannyt, vector<acmPoint> &outpu
 }
 //=================================================================================
 
+
+//============================== Achar bola ====================================
+
+acmPoint findBall(Mat &roiImg, int minr, int maxr, double thScore = -1){
+	int thNCirc = 10;
+	int thCanny = 100;
+	
+	vector<acmPoint> circles;	
+	houghC1(roiImg,minr,maxr,thCanny,circles,thNCirc,thScore);
+	
+	//TODO fazer análise de histograma para filtrar aqui
+		
+	return circles[0];
+	
+}
+
+
+//=================================================================================
+
+
+//============================== Ajuste da ROI ====================================
+
+
+void trackBall(const Mat &imgAnt, Mat &imgAt,const Rect &ROIat,const acmPoint &ballAnt, acmPoint &newBall, Rect &newROI,
+int minr=0, int maxr=0, bool firstTime = false){
+	int deltaR=2;
+	int limMinR = 2;
+	int limMaxR = min(imgAt.rows/2,imgAt.cols/2);
+	double roiScale=3;
+	Rect roiRect;
+	
+	if(firstTime){
+		roiRect = Rect(0,0,imgAt.cols-1,imgAt.rows-1);
+		
+	}else{
+		roiRect = ROIat;
+		if(ballAnt.inic){
+			minr = max(limMinR,ballAnt.rad-deltaR);
+			maxr = min(limMaxR,ballAnt.rad+deltaR);
+		}
+	}
+	
+	Mat roiImg = imgAt(roiRect);
+	newBall = findBall(roiImg,minr,maxr);
+	newBall.cx += roiRect.x; 
+	newBall.cy += roiRect.y;
+
+	Point center(newBall.cx,newBall.cy);
+	int rad = newBall.rad;
+	
+	newROI = Rect(center.x - roiScale*rad, center.y - roiScale*rad,2*roiScale*rad,2*roiScale*rad);
+	newROI = newROI & Rect(0,0,imgAt.cols-1,imgAt.rows-1);
+	printf("vnorm = %lf\n",newBall.vnorm);
+	
+} 
+
+//=================================================================================
+
+
+
+
+
 //================================== Fim ==========================================
+
 
 int main(int, char**)
 {
@@ -256,9 +323,14 @@ int main(int, char**)
     if(!cap.isOpened()) 
         return -1;
 
-    Mat gray,frame,gray2;
+    Mat gray,frame,gray2,grayAnt;
     
     vector<acmPoint> circles;
+    bool firstFrame = true;
+    Rect roiRect,newRoiRect;
+    acmPoint ballAt,newBall;
+    
+    double thRestart = 0.2;
     
     for(;;)
     {
@@ -269,18 +341,38 @@ int main(int, char**)
         cvtColor(frame, gray, CV_BGR2GRAY);
         gray2 = gray.clone();
         
+        
         GaussianBlur(gray, gray, Size(5,5), 1.5, 1.5);
         
+        if(firstFrame){
+        	trackBall(grayAnt,gray,Rect(130,175,25,25),acmPoint(),newBall,newRoiRect,5,30,false);
+        }else{
+        	if(ballAt.vnorm < thRestart){
+        		roiRect = Rect(0,0,gray.cols-1,gray.rows-1);
+				trackBall(grayAnt,gray,roiRect,ballAt,newBall,newRoiRect,5,30,true);
+        	}else{
+        		trackBall(grayAnt,gray,roiRect,ballAt,newBall,newRoiRect);
+        	}
+        	
+        }
+        
+        /*
 		houghC1(gray,5,30,80,circles,1);
 		
 		for(unsigned int i=0; i<circles.size();i++){
 			printf("%lf %d %d %d\n",circles[i].vnorm,circles[i].rad,circles[i].cx,circles[i].cy);
 			circle(frame,Point(circles[i].cx,circles[i].cy),circles[i].rad,Scalar(255,0,0),3,8,0);
 		}
+		*/
+		
+		circle(frame,Point(newBall.cx,newBall.cy),newBall.rad,Scalar(255,0,0),2);
+
+		rectangle(frame,Point(newRoiRect.x,newRoiRect.y),Point(newRoiRect.x + newRoiRect.width - 1,
+		newRoiRect.y + newRoiRect.height -1),Scalar(0,255,0));
 		
         imshow("video", frame);
         
-        char ch = waitKey(1);
+        char ch = waitKey(40);
         if(ch >= 0){
         	if(ch == 'a'){         		
         		imwrite("testeImg7.jpeg",gray2);
@@ -289,8 +381,13 @@ int main(int, char**)
         	if(ch == 'q')
         		break;
         }
+        
+        ballAt = newBall;
+        roiRect = newRoiRect;
 		
 		
+		grayAnt = gray.clone();
+		firstFrame = false;		
     }
     
     return 0;

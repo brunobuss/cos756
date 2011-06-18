@@ -44,10 +44,14 @@ double pi = acos(-1.0);
 struct acmPoint{
 	double vnorm; // valor normalizado da votação
 	int rad,cx,cy; // raio, centro (cx,cy)
+	bool inic;
+	
+	acmPoint(){inic = false;}
 	
 	acmPoint(int rad_, int cx_,int cy_, double vnorm_ = 0){
 		rad = rad_; cx = cx_; cy = cy_;
 		vnorm = vnorm_;
+		inic = true;
 	}
 	
 	inline bool operator< (const acmPoint &p) const{
@@ -169,7 +173,7 @@ double calcVNorm(int **m,int x,int y,int nx,int ny,int rad){
 			}
 		}
 		
-	vnorm = vnorm/(sumVNormMask*2*pi*rad);
+	vnorm = vnorm/(sumVNormMask*(2*pi)*rad);
 	return vnorm;
 				
 }
@@ -249,6 +253,68 @@ void houghC1(Mat &gray, int minr, int maxr , int cannyt, vector<acmPoint> &outpu
 }
 //=================================================================================
 
+
+//============================== Achar bola ====================================
+
+acmPoint findBall(Mat &roiImg, int minr, int maxr, double thScore = -1){
+	int thNCirc = 10;
+	int thCanny = 100;
+	
+	vector<acmPoint> circles;	
+	houghC1(roiImg,minr,maxr,thCanny,circles,thNCirc,thScore);
+	
+	//TODO fazer análise de histograma para filtrar aqui
+		
+	return circles[0];
+	
+}
+
+
+//=================================================================================
+
+
+//============================== Ajuste da ROI ====================================
+
+
+void trackBall(const Mat &imgAnt, Mat &imgAt,const Rect &ROIat,const acmPoint &ballAnt, acmPoint &newBall, Rect &newROI,
+int minr=0, int maxr=0, bool firstTime = false){
+	int deltaR=2;
+	int limMinR = 2;
+	int limMaxR = min(imgAt.rows/2,imgAt.cols/2);
+	double roiScale=3;
+	Rect roiRect;
+	
+	if(firstTime){
+		roiRect = Rect(0,0,imgAt.cols-1,imgAt.rows-1);
+		
+	}else{
+		roiRect = ROIat;
+		if(ballAnt.inic){
+			minr = max(limMinR,ballAnt.rad-deltaR);
+			maxr = min(limMaxR,ballAnt.rad+deltaR);
+		}
+	}
+	
+	Mat roiImg = imgAt(roiRect);
+	newBall = findBall(roiImg,minr,maxr);
+	newBall.cx += roiRect.x; 
+	newBall.cy += roiRect.y;
+
+	Point center(newBall.cx,newBall.cy);
+	int rad = newBall.rad;
+	
+	newROI = Rect(center.x - roiScale*rad, center.y - roiScale*rad,2*roiScale*rad,2*roiScale*rad);
+	newROI = newROI & Rect(0,0,imgAt.cols-1,imgAt.rows-1);
+	printf("vnorm = %lf\n",newBall.vnorm);
+	
+} 
+
+//=================================================================================
+
+
+
+
+
 //================================== Fim ==========================================
 
 
@@ -265,18 +331,21 @@ int main(){
 	
 	printf("%d %d\n",img.rows,img.cols);
 	
-	vector<acmPoint> circles;
+	acmPoint ball;
+	Rect roiRect;
 	
-	houghC1(gray,5,25,120,circles,8);
-	
-	
-	for(i=0;(unsigned int) i<circles.size();i++){
-		printf("%lf %d %d %d\n",circles[i].vnorm,circles[i].rad,circles[i].cx,circles[i].cy);
-		circle(img,Point(circles[i].cx,circles[i].cy),circles[i].rad,Scalar(255,0,0),2);
-	}
+	trackBall(Mat(),gray,Rect(110,105,25,25),acmPoint(),ball,roiRect,5,30,false);
 	
 	
-	imshow("gray",img);
+//	rectangle(img,Point(110,105),Point(135,130),Scalar(0,0,255));
+	
+	
+	circle(img,Point(ball.cx,ball.cy),ball.rad,Scalar(255,0,0),2);
+	rectangle(img,Point(roiRect.x,roiRect.y),Point(roiRect.x + roiRect.width - 1,roiRect.y + roiRect.height -1),Scalar(0,255,0));
+	
+	
+	
+	imshow("img",img);
 	waitKey();
 	
 	
