@@ -23,6 +23,7 @@ using namespace cv;
 - restringir busca em região de interesse 
 - fazer análise de histograma
 - usar magnitude do gradiente ( a pensar)
+- pensar em parâmetros para aplicar reiniciar o tracking
 
 */
 
@@ -34,6 +35,9 @@ using namespace cv;
 */
 
 //================== Stuff ========================================================
+#define INF (1<<29)
+#define MAXR (1024)
+
 double pi = acos(-1.0);
 
 // Diz se o ponto (x,y) está dentro do Retangulo [0,nx) x [0,ny)
@@ -117,16 +121,22 @@ struct acumulator{
 // Dado matriz (2d) de votação m com dimensão nrow x ncol.
 // Percorre o arco-circular centrado em (cx,cy) de raio r no intervalo thetaRange incrementando a votação do
 // valor inc
-void incCirc(int **m,int nrow,int ncol, int cx,int cy,int r,
-pair<double,double> thetaRange = pair<double,double>(0,2*pi),int inc=1){
+
+double epsIncCirc = 0.0000001;
+
+int incCirc(int **m,int nrow,int ncol, int cx,int cy,int r,
+pair<double,double> thetaRange = pair<double,double>(0.0,2*pi),int inc=1){
 
 	double theta = thetaRange.first;
-	double h = sqrt(r*r + 1);
+	if(theta == 0.0) theta += epsIncCirc;
+	
+	double h = sqrt(r*r + 0.35);
 	double step = acos(r/h);
  
 //	printf("%lf\n",step);
 	double x,y;
-	int ix,iy,antx=-1,anty=-1;
+	int ix,iy,antx=-INF,anty=-INF;
+	int pcount=0;
 	
 	
 	for(;theta < thetaRange.second ; theta += step){
@@ -135,12 +145,15 @@ pair<double,double> thetaRange = pair<double,double>(0,2*pi),int inc=1){
 		
 		ix = (int)x;iy = (int)y;
 		if(ix == antx && iy == anty) continue;
+		pcount++;
 		
-		if(INSIDE(ix,iy,ncol,nrow))
+		if(m != NULL && INSIDE(ix,iy,ncol,nrow))
 			m[iy][ix] += inc;
 			
 		antx = x;anty = y;
 	}
+	
+	return pcount;
 
 }
 
@@ -148,6 +161,16 @@ pair<double,double> thetaRange = pair<double,double>(0,2*pi),int inc=1){
 
 
 //================== Calculo do valor normalizado =================================
+
+// calcula raio dos circulos discretizados para poder normalizar
+int preCalcDiscP[MAXR];
+bool inicPreCalcDiscP=false;
+
+void fillPreCalcDiscP(){
+	for(int i=2;i<MAXR;i++)
+		preCalcDiscP[i] = incCirc(NULL,2*i,2*i,i,i,i);
+	inicPreCalcDiscP=true;
+}
 
 
 // mascara usada para ponderar votação em uma vizinhança
@@ -164,6 +187,7 @@ int sumVNormMask = 22;
 double calcVNorm(int **m,int x,int y,int nx,int ny,int rad){
 	int i,j;
 	double vnorm=0;
+
 	
 	for(i = -1; i<=1;i++)
 		for(j=-1;j<=1;j++){
@@ -172,7 +196,7 @@ double calcVNorm(int **m,int x,int y,int nx,int ny,int rad){
 			}
 		}
 		
-	vnorm = vnorm/(sumVNormMask*(2*pi)*rad);
+	vnorm = vnorm/(sumVNormMask*preCalcDiscP[rad]);
 	return vnorm;
 				
 }
@@ -194,7 +218,7 @@ void houghC1(Mat &gray, int minr, int maxr , int cannyt, vector<acmPoint> &outpu
 	
 	output.clear();
 		
-	Canny(gray,edges,cannyt,cannyt-3,3,true);	
+	Canny(gray,edges,cannyt,cannyt,3,true);	
 	Sobel(gray,Ix,DataType<double>::depth,1,0,3,((double)1)/(8*255)); // [-0.5, 0.5]
 	Sobel(gray,Iy,DataType<double>::depth,0,1,3,((double)1)/(8*255)); // [-0.5, 0.5]
 	
@@ -219,6 +243,9 @@ void houghC1(Mat &gray, int minr, int maxr , int cannyt, vector<acmPoint> &outpu
 	}
 	
 	double vnorm;
+	
+	if(!inicPreCalcDiscP)
+		fillPreCalcDiscP();
 	
 	for(rad=0;rad<acm.nrad;rad++){
 //		printf("rad = %d\n",rad + minr);
@@ -277,7 +304,7 @@ acmPoint findBall(Mat &roiImg, int minr, int maxr, double thScore = -1){
 
 void trackBall(const Mat &imgAnt, Mat &imgAt,const Rect &ROIat,const acmPoint &ballAnt, acmPoint &newBall, Rect &newROI,
 int minr=0, int maxr=0, bool firstTime = false){
-	int deltaR=2;
+	int deltaR=1;
 	int limMinR = 2;
 	int limMaxR = min(imgAt.rows/2,imgAt.cols/2);
 	double roiScale=3;
@@ -304,7 +331,7 @@ int minr=0, int maxr=0, bool firstTime = false){
 	
 	newROI = Rect(center.x - roiScale*rad, center.y - roiScale*rad,2*roiScale*rad,2*roiScale*rad);
 	newROI = newROI & Rect(0,0,imgAt.cols-1,imgAt.rows-1);
-	printf("vnorm = %lf\n",newBall.vnorm);
+	printf("vnorm = %lf\n rad = %d\n",newBall.vnorm,newBall.rad);
 	
 } 
 
@@ -319,7 +346,7 @@ int minr=0, int maxr=0, bool firstTime = false){
 
 int main(int, char**)
 {
-    VideoCapture cap("./arquivoTeste/embx.flv"); 
+    VideoCapture cap("./arquivoTeste/pass.flv"   /*"./arquivoTeste/embx.flv"*/); 
     if(!cap.isOpened()) 
         return -1;
 
@@ -330,7 +357,12 @@ int main(int, char**)
     Rect roiRect,newRoiRect;
     acmPoint ballAt,newBall;
     
-    double thRestart = 0.2;
+    double thRestart = 0.28; //0.35;
+    int countRestart = 0;
+    
+    int globalMinR=2,globalMaxR=10;
+    Rect inicRoi(130,175,25,25);
+    
     
     for(;;)
     {
@@ -345,11 +377,17 @@ int main(int, char**)
         GaussianBlur(gray, gray, Size(5,5), 1.5, 1.5);
         
         if(firstFrame){
-        	trackBall(grayAnt,gray,Rect(130,175,25,25),acmPoint(),newBall,newRoiRect,5,30,false);
+        	trackBall(grayAnt,gray,inicRoi,acmPoint(),newBall,newRoiRect,globalMinR,globalMaxR,false);
         }else{
+        	
         	if(ballAt.vnorm < thRestart){
-        		roiRect = Rect(0,0,gray.cols-1,gray.rows-1);
-				trackBall(grayAnt,gray,roiRect,ballAt,newBall,newRoiRect,5,30,true);
+        		countRestart++;        		
+			}else
+				countRestart = 0;
+			
+			if(countRestart == 10){
+				trackBall(grayAnt,gray,roiRect,ballAt,newBall,newRoiRect,globalMinR,globalMaxR,true);
+				countRestart = 0;
         	}else{
         		trackBall(grayAnt,gray,roiRect,ballAt,newBall,newRoiRect);
         	}

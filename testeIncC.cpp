@@ -36,8 +36,12 @@ using namespace cv;
 //================== Stuff ========================================================
 double pi = acos(-1.0);
 
+#define INF (1<<29)
+
 // Diz se o ponto (x,y) está dentro do Retangulo [0,nx) x [0,ny)
 #define INSIDE(x,y,nx,ny) (((x) >=0 && (x) < (nx) && (y)>=0 && (y) < (ny))?1:0)
+
+
 
 // Estrutura que representa uma possível resposta no espaço de busca.
 struct acmPoint{
@@ -113,30 +117,43 @@ struct acumulator{
 // Dado matriz (2d) de votação m com dimensão nrow x ncol.
 // Percorre o arco-circular centrado em (cx,cy) de raio r no intervalo thetaRange incrementando a votação do
 // valor inc
-void incCirc(int **m,int nrow,int ncol, int cx,int cy,int r,
-pair<double,double> thetaRange = pair<double,double>(0,2*pi),int inc=1){
+
+double eps = 0.0000001;
+
+int incCirc(int **m,int nrow,int ncol, int cx,int cy,int r,
+pair<double,double> thetaRange = pair<double,double>(0.0,2*pi),int inc=1){
 
 	double theta = thetaRange.first;
-	double h = sqrt(r*r + 1);
+	if(theta == 0.0)theta += eps;
+	
+	double h = sqrt(r*r + 0.35);
 	double step = acos(r/h);
  
 //	printf("%lf\n",step);
 	double x,y;
-	int ix,iy,antx=-1,anty=-1;
+	int ix,iy,antx=-INF,anty=-INF;
 	
+	int pcount =0;
+	int count2=0;
 	
-	for(;theta < thetaRange.second ; theta += step){
+	for(;theta < thetaRange.second ; theta += step){		
+		count2++;
 		x = cx + r*cos(theta);
 		y = cy + r*sin(theta);
 		
 		ix = (int)x;iy = (int)y;
 		if(ix == antx && iy == anty) continue;
+		pcount++;
+		printf("%d %d %lf\n",iy,ix,theta);
 		
 		if(INSIDE(ix,iy,ncol,nrow))
 			m[iy][ix] += inc;
 			
 		antx = x;anty = y;
 	}
+	
+	printf("%d %d razao=%lf\n",pcount,count2,pcount/(2*pi*r));
+	return pcount;
 
 }
 
@@ -267,7 +284,7 @@ int main(){
 	while(1){
 	
 		int cx,cy,rad;
-		pair<double,double> thetaRange(0.0,2*0.79);
+		pair<double,double> thetaRange(0.0,2*pi);
 	
 		scanf("%d %d %d",&cx,&cy,&rad);
 		incCirc(mat,n,m,cx,cy,rad,thetaRange);
