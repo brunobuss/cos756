@@ -105,14 +105,19 @@ void calcula_histograma(Mat &imagem, vector<acmPoint> &pontos) {
 	for(it = pontos.begin(); it != pontos.end(); ++it) {
 		calcula_score_histograma(imagem, *it);
 		if(maior_score < it->vhistograma) maior_score = it->vhistograma;
+		printf("%lf(%lf) ", it->vhistograma, it->vnorm);
 	}
+	printf("\n%lf\n", maior_score);
 
 	//Normaliza:
 	for(it = pontos.begin(); it != pontos.end(); ++it) {
 		it->vhistograma = 1 - (it->vhistograma/maior_score);
 		it->calculaScore();
+		printf("%lf ", it->score_final);
 	}
+	printf("\n");
 
 	sort(pontos.begin(), pontos.end());
+	reverse(pontos.begin(), pontos.end());
 }
 

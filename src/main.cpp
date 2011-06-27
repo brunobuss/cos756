@@ -2,7 +2,7 @@
 
 int main(int argc, char* argv[]){
 
-    VideoCapture cap("./arquivoTeste/pass.flv"   /*"./arquivoTeste/embx.flv"*/); 
+    VideoCapture cap(/*"./arquivoTeste/pass.flv"*/   "./arquivoTeste/embx.flv"); 
     if(!cap.isOpened()) 
         return -1;
 
@@ -13,10 +13,10 @@ int main(int argc, char* argv[]){
     Rect roiRect,newRoiRect;
     acmPoint ballAt,newBall;
     
-    double thRestart = 0.35; //0.35;
+    double thRestart = 0.22; //0.35;
     int countRestart = 0;
     
-    int globalMinR=2,globalMaxR=4;
+    int globalMinR=5,globalMaxR=30;
     Rect inicRoi(130,175,25,25);
 
     bool fAcertou = false;
@@ -65,7 +65,7 @@ int main(int argc, char* argv[]){
 		
         imshow("video", frame);
         
-	if(fAcertou && newBall.vhistograma > 0.0) ch = waitKey(40);
+	if(fAcertou /*&& newBall.vhistograma > 0.0*/) ch = waitKey(40);
 	else ch = waitKey();
 
         if(ch >= 0){

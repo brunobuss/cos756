@@ -8,7 +8,6 @@ acmPoint findBall(Mat &roiImg, Mat &roiImgGray, int minr, int maxr, bool filtraH
 	vector<acmPoint> circles;	
 	houghC1(roiImgGray,minr,maxr,thCanny,circles,thNCirc,thScore);
 	
-
 	if(filtraHistograma) calcula_histograma(roiImg, circles);
 	
 	/*vector<acmPoint>::iterator it;
