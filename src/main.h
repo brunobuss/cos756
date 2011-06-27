@@ -33,20 +33,30 @@ inline bool INSIDE(int const& x, int const& y, int const& nx, int const& ny){
 //Estrutura que representa uma possível resposta no espaço de busca.
 struct acmPoint{
 	double vnorm; // valor normalizado da votação
+	double vhistograma; // score com base na comparação de histograma
+	double score_final;	
+	
+
 	int rad,cx,cy; // raio, centro (cx,cy)
+
 	bool inic;
 	
 	acmPoint(){inic = false;}
 	
 	acmPoint(int rad_, int cx_,int cy_, double vnorm_ = 0){
 		rad = rad_; cx = cx_; cy = cy_;
-		vnorm = vnorm_;
+		score_final = vnorm = vnorm_;
+		vhistograma = 0.0;
 		inic = true;
 	}
+
+	void calculaScore(){ score_final =  0.3 * vnorm + 0.7 * vhistograma; }
 	
 	inline bool operator< (const acmPoint &p) const{
-		return (vnorm < p.vnorm);
+		return (score_final < p.score_final);
 	}
+
+
 };
 
 
@@ -61,9 +71,11 @@ double calcVNorm(int **m,int x,int y,int nx,int ny,int rad);
 void houghC1(Mat &gray, int minr, int maxr , int cannyt, vector<acmPoint> &output,
  		unsigned int thNCirc = 1, double thVNorm = -1);
 
-acmPoint findBall(Mat &roiImg, int minr, int maxr, double thScore = -1);
+acmPoint findBall(Mat &frame, Mat &roiImg, int minr, int maxr, bool filtraHistograma = false, double thScore = -1);
 
-void trackBall(const Mat &imgAnt, Mat &imgAt,const Rect &ROIat,const acmPoint &ballAnt,
-		acmPoint &newBall, Rect &newROI, int minr=0, int maxr=0, bool firstTime = false);
+void trackBall(const Mat &frameAnterior, Mat &frame,const Rect &ROIat,const acmPoint &ballAnt,
+		acmPoint &newBall, Rect &newROI, int minr=0, int maxr=0, bool firstTime = false, bool filtraHistograma = false);
 
+void calcula_histograma(Mat &imagem, vector<acmPoint> &pontos);
 
+void define_histograma_otimo(const Mat &imagem, acmPoint &ponto);

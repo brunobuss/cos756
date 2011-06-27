@@ -72,7 +72,7 @@ pair<double,double> calcThetaRange(double dx,double dy,double delta = 2*pi){
 
 void houghC1(Mat &gray, int minr, int maxr , int cannyt, vector<acmPoint> &output, unsigned int thNCirc, double thVNorm){
 	Mat edges,Ix,Iy;
-	double deltaTheta = 0.79; // 45 graus
+	double deltaTheta = 0.79/2; // 45 graus
 	int i,j,rad;
 	pair<double,double> dTheta;
 	set<acmPoint> outputMinHeap;
