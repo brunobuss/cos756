@@ -56,37 +56,37 @@ int main(int argc, char* argv[]){
 		*/
 		
 
-	Mat framefu = frame.clone();
+		Mat framefu = frame.clone();
 
-	circle(frame,Point(newBall.cx,newBall.cy),newBall.rad,Scalar(255,0,0),2);
+		circle(frame,Point(newBall.cx,newBall.cy),newBall.rad,Scalar(255,0,0),2);
 
-	rectangle(frame,Point(newRoiRect.x,newRoiRect.y),Point(newRoiRect.x + newRoiRect.width - 1,
-	newRoiRect.y + newRoiRect.height -1),Scalar(0,255,0));
+		rectangle(frame,Point(newRoiRect.x,newRoiRect.y),Point(newRoiRect.x + newRoiRect.width - 1,
+		newRoiRect.y + newRoiRect.height -1),Scalar(0,255,0));
 		
         imshow("video", frame);
         
-	if(fAcertou /*&& newBall.vhistograma > 0.0*/) ch = waitKey(40);
-	else ch = waitKey();
+		if(fAcertou /*&& newBall.vhistograma > 0.0*/) ch = waitKey(40);
+		else ch = waitKey();
 
         if(ch >= 0){
-        	/*if(ch == 'a'){         		
-        		imwrite("testeImg7.jpeg",gray2);
-        		imwrite("verificador7.jpeg",frame);
-        	}*/
-		if(ch == 's'){
-			define_histograma_otimo(framefu, newBall);
-			fAcertou = true;
-		}
-        	if(ch == 'q')
-        		break;
+	    	/*if(ch == 'a'){         		
+	    		imwrite("testeImg7.jpeg",gray2);
+	    		imwrite("verificador7.jpeg",frame);
+	    	}*/
+			if(ch == 's'){
+				define_histograma_otimo(framefu, newBall);
+				fAcertou = true;
+			}
+		    if(ch == 'q')
+		    	break;
         }
         
         ballAt = newBall;
         roiRect = newRoiRect;
 		
 	
-	grayAnt = gray.clone();
-	firstFrame = false;		
+		grayAnt = gray.clone();
+		firstFrame = false;		
     }
     
     return 0;

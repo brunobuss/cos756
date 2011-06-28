@@ -29,13 +29,13 @@ int minr, int maxr, bool firstTime, bool filtraHistograma){
 	Rect roiRect;
 	Mat frameFuturoGray;
 	
-        cvtColor(frameFuturo, frameFuturoGray, CV_BGR2GRAY);
-        GaussianBlur(frameFuturoGray, frameFuturoGray, Size(5,5), 1.5, 1.5);
+    cvtColor(frameFuturo, frameFuturoGray, CV_BGR2GRAY);
+    GaussianBlur(frameFuturoGray, frameFuturoGray, Size(5,5), 1.5, 1.5);
 
 	int limMaxR = min(frameFuturoGray.rows/2,frameFuturoGray.cols/2);
 
 	if(firstTime){
-		roiRect = Rect(0,0,frameFuturoGray.cols-1,frameFuturoGray.rows-1);
+		roiRect = Rect(0,0,frameFuturoGray.cols,frameFuturoGray.rows);
 		
 	}else{
 		roiRect = ROIat;
@@ -54,8 +54,8 @@ int minr, int maxr, bool firstTime, bool filtraHistograma){
 	Point center(newBall.cx,newBall.cy);
 	int rad = newBall.rad;
 	
-	newROI = Rect(center.x - roiScale*rad, center.y - roiScale*rad,2*roiScale*rad,2*roiScale*rad);
-	newROI = newROI & Rect(0,0,frameFuturoGray.cols-1,frameFuturoGray.rows-1);
+	newROI = Rect(center.x - roiScale*rad -1, center.y - roiScale*rad -1,2*roiScale*rad + 1,2*roiScale*rad + 1);
+	newROI = newROI & Rect(0,0,frameFuturoGray.cols,frameFuturoGray.rows);
 	printf("vnorm = %lf\nvhist = %lf\nscore_final=%lf\nrad = %d\n",newBall.vnorm,newBall.vhistograma,
 									newBall.score_final, newBall.rad);
 	
