@@ -31,7 +31,7 @@ int main(){
 	Mat img = imread("testeImg2.jpeg",1),gray,Ix,Iy,edges;	
 //	img = img(Range(160,200),Range(130,170));
 	cvtColor(img,gray,CV_BGR2GRAY);
-	Canny(gray,edges,cannyt,cannyt-3,3,true);
+	Canny(gray,edges,cannyt,cannyt,3,true);
 	
 	GaussianBlur(gray, gray, Size(5,5), 1.5, 1.5);	
 	printf("%d %d\n",img.rows,img.cols);
