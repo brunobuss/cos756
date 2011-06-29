@@ -1,17 +1,6 @@
 #include "main.h"
 
-<<<<<<< HEAD
-int main(int argc, char* argv[]){
-
-    teste_histograma_img();
-    //teste_discretizazao();
-    //teste_gradientes();
-    //teste_acha_circulos();
- 
-    return 0; //Temporário :P
-=======
 void video_mode(char file[]) {
->>>>>>> 6a21b830ae0f3e7f7943cee5603a5f60592a69f7
 
     /*"./arquivoTeste/pass.flv"   "./arquivoTeste/embx.flv"*/
     VideoCapture cap(file); 
@@ -61,23 +50,18 @@ void video_mode(char file[]) {
         	
         }
         
-	Mat framecopy = frame.clone();
+		Mat framecopy = frame.clone();
 
-	circle(frame,Point(newBall.cx,newBall.cy),newBall.rad,Scalar(255,0,0),2);
-	rectangle(frame,Point(newRoiRect.x,newRoiRect.y),Point(newRoiRect.x + newRoiRect.width - 1,
-	newRoiRect.y + newRoiRect.height -1),Scalar(0,255,0));
+		circle(frame,Point(newBall.cx,newBall.cy),newBall.rad,Scalar(255,0,0),2);
+		rectangle(frame,Point(newRoiRect.x,newRoiRect.y),Point(newRoiRect.x + newRoiRect.width - 1,
+		newRoiRect.y + newRoiRect.height -1),Scalar(0,255,0));
 		
-<<<<<<< HEAD
-        imshow("video", frame);
-        
-		if(fAcertou /*&& newBall.vhistograma > 0.0*/) ch = waitKey(0);
-		else ch = waitKey();
-=======
-        imshow(file, frame);
 
-	if(fAcertou && !fPause) ch = waitKey(30);
-	else ch = waitKey();
->>>>>>> 6a21b830ae0f3e7f7943cee5603a5f60592a69f7
+		imshow(file, frame);
+
+		if(fAcertou && !fPause) ch = waitKey(30);
+		else ch = waitKey();
+
 
         if(ch >= 0){
 		if(ch == 'h'){
