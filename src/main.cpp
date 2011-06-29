@@ -1,5 +1,6 @@
 #include "main.h"
 
+<<<<<<< HEAD
 int main(int argc, char* argv[]){
 
     teste_histograma_img();
@@ -8,11 +9,14 @@ int main(int argc, char* argv[]){
     //teste_acha_circulos();
  
     return 0; //Temporário :P
+=======
+void video_mode(char file[]) {
+>>>>>>> 6a21b830ae0f3e7f7943cee5603a5f60592a69f7
 
-
-    VideoCapture cap(/*"./arquivoTeste/pass.flv"*/   "./arquivoTeste/embx.flv"); 
+    /*"./arquivoTeste/pass.flv"   "./arquivoTeste/embx.flv"*/
+    VideoCapture cap(file); 
     if(!cap.isOpened()) 
-        return -1;
+        exit(1);
 
     Mat gray,frame,gray2,grayAnt;
     
@@ -27,11 +31,13 @@ int main(int argc, char* argv[]){
     int globalMinR=5,globalMaxR=30;
     Rect inicRoi(130,175,25,25);
 
+    //Flags
     bool fAcertou = false;
+    bool fPause = true;
+
     char ch;
     
-    
-    for(;;)
+    while(1)
     {
                         
         cap >> frame;
@@ -42,51 +48,49 @@ int main(int argc, char* argv[]){
         	
         	if(ballAt.score_final < thRestart){
         		countRestart++;        		
-			}else
-				countRestart = 0;
+		}
+		else countRestart = 0;
 			
-			if(countRestart == 10){
-				trackBall(grayAnt,frame,roiRect,ballAt,newBall,newRoiRect,globalMinR,globalMaxR,true, fAcertou);
-				countRestart = 0;
-        	}else{
+		if(countRestart == 10){
+			trackBall(grayAnt,frame,roiRect,ballAt,newBall,newRoiRect,globalMinR,globalMaxR,true, fAcertou);
+			countRestart = 0;
+        	}
+		else{
         		trackBall(grayAnt,frame,roiRect,ballAt,newBall,newRoiRect, 0, 0, false, fAcertou);
         	}
         	
         }
         
-        /*
-		houghC1(gray,5,30,80,circles,1);
-		
-		for(unsigned int i=0; i<circles.size();i++){
-			printf("%lf %d %d %d\n",circles[i].vnorm,circles[i].rad,circles[i].cx,circles[i].cy);
-			circle(frame,Point(circles[i].cx,circles[i].cy),circles[i].rad,Scalar(255,0,0),3,8,0);
-		}
-		*/
-		
+	Mat framecopy = frame.clone();
 
-		Mat framefu = frame.clone();
-
-		circle(frame,Point(newBall.cx,newBall.cy),newBall.rad,Scalar(255,0,0),2);
-
-		rectangle(frame,Point(newRoiRect.x,newRoiRect.y),Point(newRoiRect.x + newRoiRect.width - 1,
-		newRoiRect.y + newRoiRect.height -1),Scalar(0,255,0));
+	circle(frame,Point(newBall.cx,newBall.cy),newBall.rad,Scalar(255,0,0),2);
+	rectangle(frame,Point(newRoiRect.x,newRoiRect.y),Point(newRoiRect.x + newRoiRect.width - 1,
+	newRoiRect.y + newRoiRect.height -1),Scalar(0,255,0));
 		
+<<<<<<< HEAD
         imshow("video", frame);
         
 		if(fAcertou /*&& newBall.vhistograma > 0.0*/) ch = waitKey(0);
 		else ch = waitKey();
+=======
+        imshow(file, frame);
+
+	if(fAcertou && !fPause) ch = waitKey(30);
+	else ch = waitKey();
+>>>>>>> 6a21b830ae0f3e7f7943cee5603a5f60592a69f7
 
         if(ch >= 0){
-	    	/*if(ch == 'a'){         		
-	    		imwrite("testeImg7.jpeg",gray2);
-	    		imwrite("verificador7.jpeg",frame);
-	    	}*/
-			if(ch == 's'){
-				define_histograma_otimo(framefu, newBall);
-				fAcertou = true;
-			}
-		    if(ch == 'q')
-		    	break;
+		if(ch == 'h'){
+			define_histograma_otimo(framecopy, newBall);
+			fAcertou = true;
+		}
+
+		if(ch == 'p') {
+			if(fPause) fPause = false;
+			else fPause = true;
+		}
+	
+		if(ch == 'q') break;
         }
         
         ballAt = newBall;
@@ -96,32 +100,79 @@ int main(int argc, char* argv[]){
 		grayAnt = gray.clone();
 		firstFrame = false;		
     }
-    
-    return 0;
+}
 
-
-
-
-/*	Mat gray,
-	    img = imread("./arquivoTeste/testeImg6.jpeg",1);
+void image_mode(char file[]) {
+	Mat gray,
+	    img = imread(file,1);
 	acmPoint ball;
 	Rect roiRect;
+	
+	trackBall(Mat(),img,Rect(110,105,25,25),acmPoint(),ball,roiRect,5,30,false);
 
-	//Trabalhando apenas com a imagem em preto e branco.
-	cvtColor(img,gray,CV_BGR2GRAY);
-
-	//Passando o filtro gaussiano do openCV
-	GaussianBlur(gray, gray, Size(5,5), 1.5, 1.5);
-	
-	printf("%d %d\n",img.rows,img.cols);
-	
-	trackBall(Mat(),gray,Rect(110,105,25,25),acmPoint(),ball,roiRect,5,30,false);
-		
-	//rectangle(img,Point(110,105),Point(135,130),Scalar(0,0,255));
-	
 	circle(img,Point(ball.cx,ball.cy),ball.rad,Scalar(255,0,0),2);
 	rectangle(img,Point(roiRect.x,roiRect.y),Point(roiRect.x + roiRect.width - 1,roiRect.y + roiRect.height -1),Scalar(0,255,0));
 	
-	imshow("img",img);
-	waitKey();*/
+	imshow(file,img);
+	waitKey();
 }
+
+char arquivo[1024];
+int mode = -1; //0 = video, 1 = imagem, 2 = testes
+
+void parse_options(int argc, char* argv[]) {
+    int option_index, option;
+
+    static struct option long_options[] = {
+        {"video",	required_argument, 0, 'v'},
+        {"image",	required_argument, 0, 'i'},
+        {"tests",	no_argument	 , 0, 't'},
+        {0,		0,                 0,  0 }};
+
+    while(1)
+    {
+        option_index = 0;
+        option = getopt_long(argc, argv, "v:i:t", long_options, &option_index);
+
+        if(option == -1) break;
+
+        switch(option) {
+            case 'v':
+		strncpy(arquivo, optarg, 1020);
+		mode = 0;
+                break;
+            case 'i':
+		strncpy(arquivo, optarg, 1020);
+		mode = 1;
+                break;
+            case 't':
+		mode = 2;
+                break;
+	}
+    }
+}
+
+int main(int argc, char* argv[]){
+
+    parse_options(argc, argv);
+
+    if(mode == 0) {
+        video_mode(arquivo);
+    }
+    else if(mode == 1) {
+        image_mode(arquivo);
+    }
+    else if(mode == 2) {
+        //teste_histograma_img();
+        teste_discretizazao();
+        teste_gradientes();
+        teste_acha_circulos();
+    }
+    else printf("Você precisa escolher um dos modos (video, image ou tests) para executar o programa.\n");
+
+
+ 
+    return 0; //Temporário :P
+}
+
+
