@@ -4,6 +4,7 @@
 #include<algorithm>
 #include<string.h>
 #include<time.h>
+#include<getopt.h>
 
 #include<cv.h>
 #include<highgui.h>
