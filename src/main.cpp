@@ -2,6 +2,14 @@
 
 int main(int argc, char* argv[]){
 
+    teste_histograma_img();
+    teste_discretizazao();
+    teste_gradientes();
+    teste_acha_circulos();
+ 
+    return 0; //Temporário :P
+
+
     VideoCapture cap(/*"./arquivoTeste/pass.flv"*/   "./arquivoTeste/embx.flv"); 
     if(!cap.isOpened()) 
         return -1;
