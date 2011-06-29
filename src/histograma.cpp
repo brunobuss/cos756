@@ -72,6 +72,7 @@ void calcula_score_histograma(const Mat &imagem, acmPoint &ponto) {
 		for(int j = ponto.cy - ponto.rad; j <= ponto.cy + ponto.rad; ++j) {
 		
 			if( ((ponto.cx - i) * (ponto.cx - i) + (ponto.cy - j) * (ponto.cy - j)) > (ponto.rad * ponto.rad) ) continue;
+			if(!INSIDE(i, j, imagem.rows, imagem.cols)) continue;
 
 			total_pontos++;
 
@@ -105,17 +106,17 @@ void calcula_histograma(Mat &imagem, vector<acmPoint> &pontos) {
 	for(it = pontos.begin(); it != pontos.end(); ++it) {
 		calcula_score_histograma(imagem, *it);
 		if(maior_score < it->vhistograma) maior_score = it->vhistograma;
-		printf("%lf(%lf) ", it->vhistograma, it->vnorm);
+		//printf("%lf(%lf) ", it->vhistograma, it->vnorm);
 	}
-	printf("\n%lf\n", maior_score);
+	//printf("\n%lf\n", maior_score);
 
 	//Normaliza:
 	for(it = pontos.begin(); it != pontos.end(); ++it) {
 		it->vhistograma = 1 - (it->vhistograma/maior_score);
 		it->calculaScore();
-		printf("%lf ", it->score_final);
+		//printf("%lf ", it->score_final);
 	}
-	printf("\n");
+	//printf("\n");
 
 	sort(pontos.begin(), pontos.end());
 	reverse(pontos.begin(), pontos.end());
