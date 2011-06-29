@@ -65,7 +65,7 @@ int main(int argc, char* argv[]){
 		
         imshow("video", frame);
         
-		if(fAcertou /*&& newBall.vhistograma > 0.0*/) ch = waitKey(40);
+		if(fAcertou /*&& newBall.vhistograma > 0.0*/) ch = waitKey(0);
 		else ch = waitKey();
 
         if(ch >= 0){
