@@ -17,7 +17,7 @@ using namespace std;
 using namespace cv;
 
 //RGB
-vector< vector< vector <double> > > histograma_otimo;
+extern vector< vector< vector <double> > > histograma_otimo;
 
 #define NIVEL_POR_COR 5
 #define FATOR (256.0/NIVEL_POR_COR)

@@ -1,5 +1,7 @@
 #include "main.h"
 
+vector< vector< vector <double> > > histograma_otimo;
+
 void inicializa_histograma(vector< vector< vector <double> > > &histograma) {
 
 	histograma.clear();
