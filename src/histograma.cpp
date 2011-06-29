@@ -3,7 +3,7 @@
 //RGB
 vector< vector< vector <double> > > histograma_otimo;
 
-#define NIVEL_POR_COR 10
+#define NIVEL_POR_COR 5
 #define FATOR (256.0/NIVEL_POR_COR)
 
 void inicializa_histograma(vector< vector< vector <double> > > &histograma) {
@@ -84,14 +84,15 @@ void calcula_score_histograma(const Mat &imagem, acmPoint &ponto) {
 		}
 	}
 
-	normaliza_histograma(histograma_ponto, total_pontos);
+	if(total_pontos > 0) normaliza_histograma(histograma_ponto, total_pontos);
 
 	//Compara com o histograma "ótimo" e atribui um score (ainda não normalizado).
-	double score = 0;
+	double score = 0.0;
 	for(int i = 0; i < NIVEL_POR_COR; i++) {
 		for(int j = 0; j < NIVEL_POR_COR; j++) {
 			for(int k = 0; k < NIVEL_POR_COR; k++) {
 				double diff = histograma_ponto[i][j][k] - histograma_otimo[i][j][k];
+				//if(diff < 0.0) diff *= -1.0;
 				score += diff * diff;
 			}
 		}
@@ -105,14 +106,16 @@ void calcula_histograma(Mat &imagem, vector<acmPoint> &pontos) {
 
 	for(it = pontos.begin(); it != pontos.end(); ++it) {
 		calcula_score_histograma(imagem, *it);
-		if(maior_score < it->vhistograma) maior_score = it->vhistograma;
+		if(maior_score < it->vhistograma || maior_score == -1) maior_score = it->vhistograma;
 		//printf("%lf(%lf) ", it->vhistograma, it->vnorm);
 	}
 	//printf("\n%lf\n", maior_score);
 
 	//Normaliza:
 	for(it = pontos.begin(); it != pontos.end(); ++it) {
+		//it->vhistograma = 1 - ((it->vhistograma - menor_score)/(maior_score - menor_score));
 		it->vhistograma = 1 - (it->vhistograma/maior_score);
+		if(it->vhistograma < 0.0) it->vhistograma = 0.0;
 		it->calculaScore();
 		//printf("%lf ", it->score_final);
 	}
