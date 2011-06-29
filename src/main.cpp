@@ -64,17 +64,17 @@ void video_mode(char file[]) {
 
 
         if(ch >= 0){
-		if(ch == 'h'){
-			define_histograma_otimo(framecopy, newBall);
-			fAcertou = true;
-		}
+			if(ch == 'h'){
+				define_histograma_otimo(framecopy, newBall);
+				fAcertou = true;
+			}
 
-		if(ch == 'p') {
-			if(fPause) fPause = false;
-			else fPause = true;
-		}
+			if(ch == 'p') {
+				if(fPause) fPause = false;
+				else fPause = true;
+			}
 	
-		if(ch == 'q') break;
+			if(ch == 'q') break;
         }
         
         ballAt = newBall;
@@ -147,10 +147,10 @@ int main(int argc, char* argv[]){
         image_mode(arquivo);
     }
     else if(mode == 2) {
-        //teste_histograma_img();
-        teste_discretizazao();
-        teste_gradientes();
-        teste_acha_circulos();
+        teste_histograma_img();
+        //teste_discretizazao();
+        //teste_gradientes();
+        //teste_acha_circulos();
     }
     else printf("Você precisa escolher um dos modos (video, image ou tests) para executar o programa.\n");
 
