@@ -3,8 +3,8 @@ GCCOPT = -Wall -Wextra -g
 
 all: trabalho.out
 
-trabalho.out: hough.o discretizacao.o normalizacao.o roi.o histograma.o main.o
-	@g++ -o trabalho.out $(OPENCV) $(GCCOPT) hough.o discretizacao.o normalizacao.o roi.o histograma.o main.o
+trabalho.out: hough.o discretizacao.o normalizacao.o roi.o histograma.o testes.o main.o
+	@g++ -o trabalho.out $(OPENCV) $(GCCOPT) hough.o discretizacao.o normalizacao.o roi.o histograma.o testes.o main.o
 
 hough.o: src/hough.cpp src/main.h
 	@g++ -c src/hough.cpp $(OPENCV) $(GCCOPT) -o hough.o
@@ -21,8 +21,11 @@ roi.o: src/roi.cpp src/main.h
 histograma.o: src/histograma.cpp src/main.h
 	@g++ -c src/histograma.cpp $(OPENCV) $(GCCOPT) -o histograma.o
 
+testes.o: src/testes.cpp src/main.h
+	@g++ -c src/testes.cpp $(OPENCV) $(GCCOPT) -o testes.o
+
 main.o: src/main.cpp src/main.h
 	@g++ -c src/main.cpp $(OPENCV) $(GCCOPT) -o main.o
 
 clean:
-	@rm trabalho.out hough.o discretizacao.o normalizacao.o roi.o histograma.o main.o
+	@rm trabalho.out hough.o discretizacao.o normalizacao.o roi.o histograma.o testes.o main.o

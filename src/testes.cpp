@@ -1,3 +1,4 @@
+#include "main.h"
 
 //TODO criar imagens para testes histograma
 void teste_histograma_img(){
@@ -117,7 +118,9 @@ void teste_gradientes(){
 // Desenha ocorrencias circulares de hough na tela
 void teste_acha_circulos(){
 	Mat img = imread("./arquivoTeste/testeImg.jpeg",1);
-	Mat gray = cvtcolor(img,gray,CV_BRG2GRAY);
+	Mat gray;
+
+	cvtColor(img,gray,CV_BGR2GRAY);
 	GaussianBlur(gray,gray,Size(5,5),1.5,1.5);
 	
 	vector<acmPoint> circles;	

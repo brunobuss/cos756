@@ -79,3 +79,8 @@ void trackBall(const Mat &frameAnterior, Mat &frame,const Rect &ROIat,const acmP
 void calcula_histograma(Mat &imagem, vector<acmPoint> &pontos);
 
 void define_histograma_otimo(const Mat &imagem, acmPoint &ponto);
+
+void teste_histograma_img();
+void teste_discretizazao();
+void teste_gradientes();
+void teste_acha_circulos();
