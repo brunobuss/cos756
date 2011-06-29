@@ -1,11 +1,5 @@
 #include "main.h"
 
-//RGB
-vector< vector< vector <double> > > histograma_otimo;
-
-#define NIVEL_POR_COR 5
-#define FATOR (256.0/NIVEL_POR_COR)
-
 void inicializa_histograma(vector< vector< vector <double> > > &histograma) {
 
 	histograma.clear();

@@ -30,7 +30,7 @@ void teste_histograma_img(){
 	for(int i = 0; i < NIVEL_POR_COR; i++) {
 		for(int j = 0; j < NIVEL_POR_COR; j++) {
 			for(int k = 0; k < NIVEL_POR_COR; k++) {
-				printf("(B=%d,G=%d,R=%d) \% = %lf\n",histograma_otimo[i][j][k]);
+				printf("(B=%d,G=%d,R=%d) = %lf\n",i,j,k,histograma_otimo[i][j][k]);
 			}
 		}
 	}
