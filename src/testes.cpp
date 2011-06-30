@@ -5,11 +5,18 @@ void teste_histograma_img(){
 	printf("\n ============ Teste Histograma ====================== \n");
 	
 	Mat img1,img2,gray1,gray2;
-	char nomeArq1[128],nomeArq2[128];
+	char nomeArq1[128],nomeArq2[128],ch;
 	
-	
-	strcpy(nomeArq1,"./arquivoTeste/art.jpeg");
-	strcpy(nomeArq2,"./arquivoTeste/art.jpeg");
+	printf("Usar arquivos default?\n");
+	scanf(" %c",&ch);
+	if(ch == 's'){
+		strcpy(nomeArq1,"./arquivoTeste/testeImg11.jpeg");
+		strcpy(nomeArq2,"./arquivoTeste/testeImg11.jpeg");
+	}else{
+		printf("Digite o nome dos dois arquivos\n");
+		scanf(" %s",nomeArq1);
+		scanf(" %s",nomeArq2);
+	}
 	
 	img1 = imread(nomeArq1,1);
 	cvtColor(img1,gray1,CV_BGR2GRAY);
@@ -34,8 +41,26 @@ void teste_histograma_img(){
 			}
 		}
 	}
+
 	
 	acmPoint b2 = findBall(img2, gray2,minr,maxr,false,thScore);
+	
+	/*
+	printf("============================\n\n");
+	
+	define_histograma_otimo(img2, b2);
+	
+	for(int i = 0; i < NIVEL_POR_COR; i++) {
+		for(int j = 0; j < NIVEL_POR_COR; j++) {
+			for(int k = 0; k < NIVEL_POR_COR; k++) {
+				printf("(B=%d,G=%d,R=%d) = %lf\n",i,j,k,histograma_otimo[i][j][k]);
+			}
+		}
+	}
+	*/
+	
+	calcula_score_histograma(img2,b2);
+	printf("vhistogram diff = %lf\n",b2.vhistograma);
 	
 	
 	circle(img1,Point(b1.cx,b1.cy),b1.rad,Scalar(255,0,0),2);

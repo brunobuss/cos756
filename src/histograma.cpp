@@ -35,7 +35,7 @@ void normaliza_histograma(vector< vector< vector <double> > > &histograma, int t
 }
 
 
-void define_histograma_otimo(const Mat &imagem, acmPoint &ponto) {
+void define_histograma_otimo(Mat &imagem, acmPoint &ponto) {
 
 	int total_pontos = 0;
 
@@ -44,12 +44,17 @@ void define_histograma_otimo(const Mat &imagem, acmPoint &ponto) {
 		for(int j = ponto.cy - ponto.rad; j <= ponto.cy + ponto.rad; ++j) {
 		
 			if( ((ponto.cx - i) * (ponto.cx - i) + (ponto.cy - j) * (ponto.cy - j)) > (ponto.rad * ponto.rad) ) continue;
-
+			if(!INSIDE(i, j, imagem.rows, imagem.cols)) continue;
+			
 			total_pontos++;
+			
 
 			int B = imagem.at<Vec3b>(j, i)[0]/FATOR;
 			int G = imagem.at<Vec3b>(j, i)[1]/FATOR;
 			int R = imagem.at<Vec3b>(j, i)[2]/FATOR;
+			
+//			imagem.at<Vec3b>(j,i)[0] = imagem.at<Vec3b>(j,i)[1] = 0;
+//			imagem.at<Vec3b>(j,i)[2] = 255;
 
 			histograma_otimo[B][G][R]++;
 		}
@@ -106,7 +111,9 @@ void calcula_histograma(Mat &imagem, vector<acmPoint> &pontos) {
 		//printf("%lf(%lf) ", it->vhistograma, it->vnorm);
 	}
 	//printf("\n%lf\n", maior_score);
-
+	
+	maior_score = 2.0;
+	
 	//Normaliza:
 	for(it = pontos.begin(); it != pontos.end(); ++it) {
 		//it->vhistograma = 1 - ((it->vhistograma - menor_score)/(maior_score - menor_score));

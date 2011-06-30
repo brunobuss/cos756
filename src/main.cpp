@@ -73,6 +73,14 @@ void video_mode(char file[]) {
 				if(fPause) fPause = false;
 				else fPause = true;
 			}
+			
+			if(ch == 'w'){
+				char nomeArq[128];
+				printf("Digite o nome para gravar\n");
+				scanf(" %s",nomeArq);
+				
+				imwrite(nomeArq,framecopy);
+			}
 	
 			if(ch == 'q') break;
         }

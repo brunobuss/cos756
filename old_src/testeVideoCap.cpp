@@ -211,7 +211,7 @@ double calcVNorm(int **m,int x,int y,int nx,int ny,int rad){
 
 void houghC1(Mat &gray, int minr, int maxr , int cannyt, vector<acmPoint> &output, unsigned int thNCirc = 1, double thVNorm = -1){
 	Mat edges,Ix,Iy;
-	double deltaTheta = 0.79; // 45 graus
+	double deltaTheta = 0.79; // 45/2 graus
 	int i,j,rad;
 	pair<double,double> dTheta;
 	set<acmPoint> outputMinHeap;
@@ -282,12 +282,29 @@ void houghC1(Mat &gray, int minr, int maxr , int cannyt, vector<acmPoint> &outpu
 
 //============================== Achar bola ====================================
 
+Mat ballTemplate;
+bool inicBallTemplate=false;
+
 acmPoint findBall(Mat &roiImg, int minr, int maxr, double thScore = -1){
 	int thNCirc = 10;
 	int thCanny = 100;
 	
 	vector<acmPoint> circles;	
 	houghC1(roiImg,minr,maxr,thCanny,circles,thNCirc,thScore);
+	
+	if(!inicBallTemplate){
+		return circles[0];		
+	}else{
+		Mat resizeTemplate;
+		
+		for(unsigned int i=0;i<circles.size();i++){
+			Mat testeTemplate = roiImg(Rect(circles[i].cx - circles[i].rad, circles[i].cy - circles[i].rad,
+			 2*circles[i].rad , 2*circles[i].rad ));
+			 
+			 imshow("",testeTemplate);
+			 waitKey();
+		}
+	}
 	
 	//TODO fazer análise de histograma para filtrar aqui
 		
@@ -346,7 +363,7 @@ int minr=0, int maxr=0, bool firstTime = false){
 
 int main(int, char**)
 {
-    VideoCapture cap("./arquivoTeste/pass.flv"   /*"./arquivoTeste/embx.flv"*/); 
+    VideoCapture cap("./arquivoTeste/pass.flv" /* "./arquivoTeste/embx.flv" */); 
     if(!cap.isOpened()) 
         return -1;
 
@@ -357,10 +374,10 @@ int main(int, char**)
     Rect roiRect,newRoiRect;
     acmPoint ballAt,newBall;
     
-    double thRestart = 0.28; //0.35;
+    double thRestart = 0.35; //0.28;
     int countRestart = 0;
     
-    int globalMinR=2,globalMaxR=10;
+    int globalMinR=2,globalMaxR=4;
     Rect inicRoi(130,175,25,25);
     
     
@@ -385,7 +402,7 @@ int main(int, char**)
 			}else
 				countRestart = 0;
 			
-			if(countRestart == 10){
+			if(countRestart == 5){
 				trackBall(grayAnt,gray,roiRect,ballAt,newBall,newRoiRect,globalMinR,globalMaxR,true);
 				countRestart = 0;
         	}else{
@@ -415,6 +432,13 @@ int main(int, char**)
         	if(ch == 'a'){         		
         		imwrite("testeImg7.jpeg",gray2);
         		imwrite("verificador7.jpeg",frame);
+        	}
+        	if(ch == 'r'){
+        		inicBallTemplate = true;
+        		ballTemplate = gray(Rect(newBall.cx - newBall.rad,newBall.cy - newBall.rad,
+        		 2*newBall.rad, 2*newBall.rad)).clone();
+        		imshow("ha",ballTemplate);
+        		waitKey();
         	}
         	if(ch == 'q')
         		break;

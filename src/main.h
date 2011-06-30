@@ -19,7 +19,7 @@ using namespace cv;
 //RGB
 extern vector< vector< vector <double> > > histograma_otimo;
 
-#define NIVEL_POR_COR 5
+#define NIVEL_POR_COR (10)
 #define FATOR (256.0/NIVEL_POR_COR)
 
 
@@ -86,7 +86,9 @@ void trackBall(const Mat &frameAnterior, Mat &frame,const Rect &ROIat,const acmP
 
 void calcula_histograma(Mat &imagem, vector<acmPoint> &pontos);
 
-void define_histograma_otimo(const Mat &imagem, acmPoint &ponto);
+void define_histograma_otimo(Mat &imagem, acmPoint &ponto);
+
+void calcula_score_histograma(const Mat &imagem, acmPoint &ponto);
 
 void teste_histograma_img();
 void teste_discretizazao();
