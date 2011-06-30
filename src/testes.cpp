@@ -10,8 +10,8 @@ void teste_histograma_img(){
 	printf("Usar arquivos default?\n");
 	scanf(" %c",&ch);
 	if(ch == 's'){
-		strcpy(nomeArq1,"./arquivoTeste/testeImg11.jpeg");
-		strcpy(nomeArq2,"./arquivoTeste/testeImg11.jpeg");
+		strcpy(nomeArq1,"./arquivoTeste/testeImg8.jpeg");
+		strcpy(nomeArq2,"./arquivoTeste/testeImg16.jpeg");
 	}else{
 		printf("Digite o nome dos dois arquivos\n");
 		scanf(" %s",nomeArq1);
@@ -42,8 +42,18 @@ void teste_histograma_img(){
 		}
 	}
 
+	int cx,cy,rad;
 	
-	acmPoint b2 = findBall(img2, gray2,minr,maxr,false,thScore);
+	printf("Digite cx cy rad ou cx = -1 para find ball\n");
+	scanf(" %d",&cx);
+	acmPoint b2;
+	
+	if(cx == -1){
+		b2 = findBall(img2, gray2,minr,maxr,false,thScore);
+	}else{
+		scanf(" %d %d",&cy,&rad);
+		b2 = acmPoint(rad,cx,cy);
+	}	
 	
 	/*
 	printf("============================\n\n");

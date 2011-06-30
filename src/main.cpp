@@ -58,6 +58,8 @@ void video_mode(char file[]) {
 		
 
 		imshow(file, frame);
+		
+		printf("cx = %d cy = %d rad = %d\n",newBall.cx,newBall.cy,newBall.rad);
 
 		if(fAcertou && !fPause) ch = waitKey(30);
 		else ch = waitKey();
@@ -87,6 +89,7 @@ void video_mode(char file[]) {
         
         ballAt = newBall;
         roiRect = newRoiRect;
+		
 		
 	
 		grayAnt = gray.clone();
