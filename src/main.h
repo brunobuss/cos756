@@ -58,7 +58,7 @@ struct acmPoint{
 		inic = true;
 	}
 
-	void calculaScore(){ score_final =  0.4 * vnorm + 0.6 * vhistograma; }
+	void calculaScore(){ score_final =  1.2 * vnorm + 0.5 * vhistograma; }
 	
 	inline bool operator< (const acmPoint &p) const{
 		return (score_final < p.score_final);
