@@ -11,7 +11,7 @@ void teste_histograma_img(){
 	scanf(" %c",&ch);
 	if(ch == 's'){
 		strcpy(nomeArq1,"./arquivoTeste/testeImg8.jpeg");
-		strcpy(nomeArq2,"./arquivoTeste/testeImg16.jpeg");
+		strcpy(nomeArq2,"./arquivoTeste/testeImg19.jpeg");
 	}else{
 		printf("Digite o nome dos dois arquivos\n");
 		scanf(" %s",nomeArq1);
@@ -34,6 +34,7 @@ void teste_histograma_img(){
 	
 	define_histograma_otimo(img1, b1);
 	
+	
 	for(int i = 0; i < NIVEL_POR_COR; i++) {
 		for(int j = 0; j < NIVEL_POR_COR; j++) {
 			for(int k = 0; k < NIVEL_POR_COR; k++) {
@@ -41,44 +42,54 @@ void teste_histograma_img(){
 			}
 		}
 	}
+	
+	while(1){
+		int cx,cy,rad;
+	
+		// TesteImg19 : cx = 121 cy = 118 rad = 7
+		printf("Digite cx cy rad ou cx = -1 para find ball\n");
+		scanf(" %d",&cx);
+		acmPoint b2;
+	
+		if(cx == -1){
+			b2 = findBall(img2, gray2,minr,maxr,false,thScore);
+		}else{
+			scanf(" %d %d",&cy,&rad);
+			b2 = acmPoint(rad,cx,cy);
+		}
+	
+	
+	
+		calcula_score_histograma(img2,b2);
+		printf("vhistogram diff = %lf\n",b2.vhistograma);
+	
+	
+		
+		printf("============================\n\n");
+	
+		define_histograma_otimo(img2, b2);
+	
+		for(int i = 0; i < NIVEL_POR_COR; i++) {
+			for(int j = 0; j < NIVEL_POR_COR; j++) {
+				for(int k = 0; k < NIVEL_POR_COR; k++) {
+					printf("(B=%d,G=%d,R=%d) = %lf\n",i,j,k,histograma_otimo[i][j][k]);
+				}
+			}
+		}
+		define_histograma_otimo(img1, b1);
+	
+	
+		circle(img1,Point(b1.cx,b1.cy),b1.rad,Scalar(255,0,0),2);
+		circle(img2,Point(b2.cx,b2.cy),b2.rad,Scalar(0,255,0),2);
+		imshow("img1",img1);
+		imshow("img2",img2);
 
-	int cx,cy,rad;
-	
-	printf("Digite cx cy rad ou cx = -1 para find ball\n");
-	scanf(" %d",&cx);
-	acmPoint b2;
-	
-	if(cx == -1){
-		b2 = findBall(img2, gray2,minr,maxr,false,thScore);
-	}else{
-		scanf(" %d %d",&cy,&rad);
-		b2 = acmPoint(rad,cx,cy);
-	}	
-	
-	/*
-	printf("============================\n\n");
-	
-	define_histograma_otimo(img2, b2);
-	
-	for(int i = 0; i < NIVEL_POR_COR; i++) {
-		for(int j = 0; j < NIVEL_POR_COR; j++) {
-			for(int k = 0; k < NIVEL_POR_COR; k++) {
-				printf("(B=%d,G=%d,R=%d) = %lf\n",i,j,k,histograma_otimo[i][j][k]);
-			}
-		}
+		ch = waitKey();
+		if(ch == 'q') break;
+		
+		cvDestroyWindow("img1");
+		cvDestroyWindow("img2");
 	}
-	*/
-	
-	calcula_score_histograma(img2,b2);
-	printf("vhistogram diff = %lf\n",b2.vhistograma);
-	
-	
-	circle(img1,Point(b1.cx,b1.cy),b1.rad,Scalar(255,0,0),2);
-	circle(img2,Point(b2.cx,b2.cy),b2.rad,Scalar(0,255,0),2);
-	imshow("img1",img1);
-	imshow("img2",img2);
-	waitKey();
-	
 	//TODO comparar histogramas
 }
 

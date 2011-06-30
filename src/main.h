@@ -19,7 +19,7 @@ using namespace cv;
 //RGB
 extern vector< vector< vector <double> > > histograma_otimo;
 
-#define NIVEL_POR_COR (5)
+#define NIVEL_POR_COR (6)
 #define FATOR (256.0/NIVEL_POR_COR)
 
 
@@ -58,7 +58,7 @@ struct acmPoint{
 		inic = true;
 	}
 
-	void calculaScore(){ score_final =  0.4 * vnorm + 0.6 * vhistograma; }
+	void calculaScore(){ score_final =  0.2 * vnorm + 0.8 * vhistograma; }
 	
 	inline bool operator< (const acmPoint &p) const{
 		return (score_final < p.score_final);

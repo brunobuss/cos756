@@ -14,7 +14,7 @@ void video_mode(char file[]) {
     Rect roiRect,newRoiRect;
     acmPoint ballAt,newBall;
     
-    double thRestart = 0.22; //0.35;
+    double thRestart = 0.35; //0.35;
     int countRestart = 0;
     
     int globalMinR=5,globalMaxR=30;
@@ -40,7 +40,7 @@ void video_mode(char file[]) {
 		}
 		else countRestart = 0;
 			
-		if(countRestart == 10){
+		if(countRestart == 4){
 			trackBall(grayAnt,frame,roiRect,ballAt,newBall,newRoiRect,globalMinR,globalMaxR,true, fAcertou);
 			countRestart = 0;
         	}

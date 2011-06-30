@@ -79,7 +79,7 @@ void houghC1(Mat &gray, int minr, int maxr , int cannyt, vector<acmPoint> &outpu
 	
 	output.clear();
 		
-	Canny(gray,edges,cannyt,cannyt,3,true);	
+	Canny(gray,edges,cannyt,cannyt/(1.2),3,true);	
 	Sobel(gray,Ix,DataType<double>::depth,1,0,3,((double)1)/(8*255)); // [-0.5, 0.5]
 	Sobel(gray,Iy,DataType<double>::depth,0,1,3,((double)1)/(8*255)); // [-0.5, 0.5]
 	

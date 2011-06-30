@@ -94,7 +94,8 @@ void calcula_score_histograma(const Mat &imagem, acmPoint &ponto) {
 			for(int k = 0; k < NIVEL_POR_COR; k++) {
 				double diff = histograma_ponto[i][j][k] - histograma_otimo[i][j][k];
 				//if(diff < 0.0) diff *= -1.0;
-				score += diff * diff;
+				if(histograma_ponto[i][j][k] + histograma_otimo[i][j][k] != 0.0)
+					score += diff * diff/(histograma_ponto[i][j][k] + histograma_otimo[i][j][k]);
 			}
 		}
 	}
