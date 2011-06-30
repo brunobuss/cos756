@@ -187,7 +187,7 @@ void teste_gradientes(){
 		}
 		imshow("edges",edges);
 		imshow("img",img);waitKey();
-		imwrite("gradientes.jpeg",img);
+		imwrite("./arquivoTeste/gradientes.jpeg",img);
 		printf("outra iteração?(s/n)\n");
 		scanf(" %c",&ch);
 	
