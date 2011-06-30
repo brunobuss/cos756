@@ -34,14 +34,16 @@ void teste_histograma_img(){
 	
 	define_histograma_otimo(img1, b1);
 	
-	
-	for(int i = 0; i < NIVEL_POR_COR; i++) {
+	/*for(int i = 0; i < NIVEL_POR_COR; i++) {
 		for(int j = 0; j < NIVEL_POR_COR; j++) {
 			for(int k = 0; k < NIVEL_POR_COR; k++) {
 				printf("(B=%d,G=%d,R=%d) = %lf\n",i,j,k,histograma_otimo[i][j][k]);
 			}
 		}
 	}
+	}*/
+
+	int cx,cy,rad;
 	
 	while(1){
 		int cx,cy,rad;
@@ -78,6 +80,16 @@ void teste_histograma_img(){
 		}
 		define_histograma_otimo(img1, b1);
 	
+		vector< vector< vector< double > > > primeiro_hist = histograma_otimo;
+
+		define_histograma_otimo(img2, b2);
+		for(int i = 0; i < NIVEL_POR_COR; i++) {
+			for(int j = 0; j < NIVEL_POR_COR; j++) {
+				for(int k = 0; k < NIVEL_POR_COR; k++) {
+					printf("(B=%d,G=%d,R=%d) = %lf %lf\n",i,j,k,primeiro_hist[i][j][k], histograma_otimo[i][j][k]);
+				}
+			}
+		}
 	
 		circle(img1,Point(b1.cx,b1.cy),b1.rad,Scalar(255,0,0),2);
 		circle(img2,Point(b2.cx,b2.cy),b2.rad,Scalar(0,255,0),2);

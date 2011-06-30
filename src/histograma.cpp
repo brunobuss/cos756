@@ -119,6 +119,7 @@ void calcula_histograma(Mat &imagem, vector<acmPoint> &pontos) {
 	for(it = pontos.begin(); it != pontos.end(); ++it) {
 		//it->vhistograma = 1 - ((it->vhistograma - menor_score)/(maior_score - menor_score));
 		it->vhistograma = 1 - (it->vhistograma/maior_score);
+		it->vhistograma = (it->vhistograma - 0.9) * 10.0;
 		if(it->vhistograma < 0.0) it->vhistograma = 0.0;
 		it->calculaScore();
 		//printf("%lf ", it->score_final);

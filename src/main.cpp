@@ -15,6 +15,7 @@ void video_mode(char file[]) {
     acmPoint ballAt,newBall;
     
     double thRestart = 0.35; //0.35;
+
     int countRestart = 0;
     
     int globalMinR=5,globalMaxR=30;
@@ -37,16 +38,16 @@ void video_mode(char file[]) {
         	
         	if(ballAt.score_final < thRestart){
         		countRestart++;        		
-		}
-		else countRestart = 0;
+			}else countRestart = 0;
 			
-		if(countRestart == 4){
-			trackBall(grayAnt,frame,roiRect,ballAt,newBall,newRoiRect,globalMinR,globalMaxR,true, fAcertou);
-			countRestart = 0;
-        	}
-		else{
-        		trackBall(grayAnt,frame,roiRect,ballAt,newBall,newRoiRect, 0, 0, false, fAcertou);
-        	}
+
+			if(countRestart == 4){
+				trackBall(grayAnt,frame,roiRect,ballAt,newBall,newRoiRect,globalMinR,globalMaxR,true, fAcertou);
+				countRestart = 0;
+		    }
+			else{
+		    		trackBall(grayAnt,frame,roiRect,ballAt,newBall,newRoiRect, 0, 0, false, fAcertou);
+		    }
         	
         }
         
