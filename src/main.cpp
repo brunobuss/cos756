@@ -171,10 +171,14 @@ int main(int argc, char* argv[]){
         image_mode(arquivo);
     }
     else if(mode == 2) {
-        teste_histograma_img();
-        //teste_discretizazao();
-        //teste_gradientes();
-        //teste_acha_circulos();
+	int teste;
+	printf("Digite o número do teste (ou -1 para todos): ");
+	scanf("%d", &teste);
+
+	if(teste == 1 || teste == -1) teste_histograma_img();
+        if(teste == 2 || teste == -2) teste_discretizazao();
+        if(teste == 3 || teste == -3) teste_gradientes();
+        if(teste == 4 || teste == -4) teste_acha_circulos();
     }
     else printf("Você precisa escolher um dos modos (video, image ou tests) para executar o programa.\n");
 
