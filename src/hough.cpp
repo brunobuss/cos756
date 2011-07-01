@@ -23,7 +23,7 @@ struct acumulator{
 	int*** m; // matriz com os valores das votações
 	int minr,maxr; // menor e maior raio considerados
 	
-	acumulator(int nrad_,int nrow_, int ncol_, int minr=5,int maxr=5){
+	acumulator(int nrad_,int nrow_, int ncol_, int minr_ =5,int maxr_ =5){
 		int i,j,k;
 		nrad = nrad_;
 		nrow = nrow_;
@@ -37,6 +37,8 @@ struct acumulator{
 					m[i][j][k] = 0;
 			}
 		}
+		minr = minr_;
+		maxr = maxr_;
 	}
 	
 	~acumulator(){

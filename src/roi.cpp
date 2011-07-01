@@ -29,6 +29,7 @@ int minr, int maxr, bool firstTime, bool filtraHistograma){
 	Rect roiRect;
 	Mat frameFuturoGray;
 	
+	
 	cvtColor(frameFuturo, frameFuturoGray, CV_BGR2GRAY);
 	GaussianBlur(frameFuturoGray, frameFuturoGray, Size(5,5), 1.5, 1.5);
 
