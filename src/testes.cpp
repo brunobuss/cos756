@@ -43,8 +43,6 @@ void teste_histograma_img(){
 	}
 	}*/
 
-	int cx,cy,rad;
-	
 	while(1){
 		int cx,cy,rad;
 	
