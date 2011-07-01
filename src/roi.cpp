@@ -25,7 +25,7 @@ void trackBall(const Mat &frameAtual, Mat &frameFuturo,const Rect &ROIat,const a
 int minr, int maxr, bool firstTime, bool filtraHistograma){
 	int deltaR=1;
 	int limMinR = 2;
-	double roiScale=3;
+	double roiScale=4;
 	Rect roiRect;
 	Mat frameFuturoGray;
 	

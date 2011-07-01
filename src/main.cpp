@@ -2,7 +2,20 @@
 
 void video_mode(char file[]) {
 
-    /*"./arquivoTeste/pass.flv"   "./arquivoTeste/embx.flv"*/
+    int globalMaxR,globalMinR; 
+    double thRestart;
+    
+    printf("Digite minr maxr e thRestart ou -1 para valores padrões\n");
+    scanf(" %d",&globalMinR);
+    if(globalMinR == -1){
+    	globalMinR = 5;
+    	globalMaxR = 30;
+    	thRestart = 0.48;
+    }else{
+    	scanf(" %d %lf",&globalMaxR,&thRestart);
+    }
+    
+    
     VideoCapture cap(file); 
     if(!cap.isOpened()) 
         exit(1);
@@ -13,14 +26,11 @@ void video_mode(char file[]) {
     bool firstFrame = true;
     Rect roiRect,newRoiRect;
     acmPoint ballAt,newBall;
-    
-    double thRestart = 0.35; //0.35;
 
     int countRestart = 0;
     
-    int globalMinR=5,globalMaxR=30;
     Rect inicRoi(130,175,25,25);
-
+    
     //Flags
     bool fAcertou = false;
     bool fPause = true;
@@ -29,11 +39,13 @@ void video_mode(char file[]) {
     
     while(1)
     {
-                        
-        cap >> frame;
+        
+        if(!cap.grab()) break;        
+        cap.retrieve(frame,0);
+        
  
         if(firstFrame){
-        	trackBall(grayAnt,frame,inicRoi,acmPoint(),newBall,newRoiRect,globalMinR,globalMaxR,false, fAcertou);
+        	trackBall(grayAnt,frame,inicRoi,acmPoint(),newBall,newRoiRect,globalMinR,globalMaxR,true, fAcertou);
         }else{
         	
         	if(ballAt.score_final < thRestart){
@@ -41,7 +53,7 @@ void video_mode(char file[]) {
 			}else countRestart = 0;
 			
 
-			if(countRestart == 4){
+			if(countRestart == 5){
 				trackBall(grayAnt,frame,roiRect,ballAt,newBall,newRoiRect,globalMinR,globalMaxR,true, fAcertou);
 				countRestart = 0;
 		    }
