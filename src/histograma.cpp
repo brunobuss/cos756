@@ -115,6 +115,7 @@ void calcHistogramScore(const Mat &imagem, acmPoint &ponto) {
  */
 void calcHistogram(Mat &imagem, vector<acmPoint> &pontos) {
     vector<acmPoint>::iterator it;
+    double maior_score = 2.0;
 
     for(it = pontos.begin(); it != pontos.end(); ++it) {
         calcHistogramScore(imagem, *it);
@@ -122,8 +123,6 @@ void calcHistogram(Mat &imagem, vector<acmPoint> &pontos) {
     }
 
     //Normaliza:
-    double maior_score = 2.0;
-
     for(it = pontos.begin(); it != pontos.end(); ++it) {
         it->vhistograma = 1 - (it->vhistograma/maior_score);
         if(it->vhistograma < 0.0) it->vhistograma = 0.0;
