@@ -8,7 +8,7 @@ acmPoint findBall(Mat &roiImg, Mat &roiImgGray, int minr, int maxr, bool filtraH
 	vector<acmPoint> circles;	
 	houghC1(roiImgGray,minr,maxr,thCanny,circles,thNCirc,thScore);
 	
-	if(filtraHistograma) calcula_histograma(roiImg, circles);
+        if(filtraHistograma) calcHistogram(roiImg, circles);
 	
 	/*vector<acmPoint>::iterator it;
 	for(it = circles.begin(); it != circles.end(); ++it) {
@@ -21,33 +21,33 @@ acmPoint findBall(Mat &roiImg, Mat &roiImgGray, int minr, int maxr, bool filtraH
 }
 
 //============================== Ajuste da ROI ====================================
-void trackBall(const Mat &frameAtual, Mat &frameFuturo,const Rect &ROIat,const acmPoint &ballAtual, acmPoint &newBall, Rect &newROI,
+void trackBall(Mat &frame,const Rect &ROIat,const acmPoint &currentBall, acmPoint &newBall, Rect &newROI,
 int minr, int maxr, bool firstTime, bool filtraHistograma){
 	int deltaR=1;
 	int limMinR = 2;
 	double roiScale=4;
 	Rect roiRect;
-	Mat frameFuturoGray;
+        Mat frameGray;
 	
 	
-	cvtColor(frameFuturo, frameFuturoGray, CV_BGR2GRAY);
-	GaussianBlur(frameFuturoGray, frameFuturoGray, Size(5,5), 1.5, 1.5);
+        cvtColor(frame, frameGray, CV_BGR2GRAY);
+        GaussianBlur(frameGray, frameGray, Size(5,5), 1.5, 1.5);
 
-	int limMaxR = min(frameFuturoGray.rows/2,frameFuturoGray.cols/2);
+        int limMaxR = min(frameGray.rows/2,frameGray.cols/2);
 
 	if(firstTime){
-		roiRect = Rect(0,0,frameFuturoGray.cols,frameFuturoGray.rows);
+                roiRect = Rect(0,0,frameGray.cols,frameGray.rows);
 		
 	}else{
 		roiRect = ROIat;
-		if(ballAtual.inic){
-			minr = max(limMinR,ballAtual.rad-deltaR);
-			maxr = min(limMaxR,ballAtual.rad+deltaR);
+                if(currentBall.inic){
+                        minr = max(limMinR,currentBall.rad-deltaR);
+                        maxr = min(limMaxR,currentBall.rad+deltaR);
 		}
 	}
 	
-	Mat roiImgGray  = frameFuturoGray(roiRect);
-	Mat roiImg	= frameFuturo(roiRect);
+        Mat roiImgGray  = frameGray(roiRect);
+        Mat roiImg	= frame(roiRect);
 	newBall = findBall(roiImg,roiImgGray,minr,maxr,filtraHistograma);
 	newBall.cx += roiRect.x; 
 	newBall.cy += roiRect.y;
@@ -56,7 +56,7 @@ int minr, int maxr, bool firstTime, bool filtraHistograma){
 	int rad = newBall.rad;
 	
 	newROI = Rect(center.x - roiScale*rad -1, center.y - roiScale*rad -1,2*roiScale*rad + 1,2*roiScale*rad + 1);
-	newROI = newROI & Rect(0,0,frameFuturoGray.cols,frameFuturoGray.rows);
+        newROI = newROI & Rect(0,0,frameGray.cols,frameGray.rows);
 	printf("vnorm = %lf\nvhist = %lf\nscore_final=%lf\nrad = %d\n",newBall.vnorm,newBall.vhistograma,
 									newBall.score_final, newBall.rad);
 	

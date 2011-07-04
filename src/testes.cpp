@@ -1,6 +1,5 @@
 #include "main.h"
 
-//TODO criar imagens para testes histograma
 void teste_histograma_img(){
 	printf("\n ============ Teste Histograma ====================== \n");
 	
@@ -32,7 +31,7 @@ void teste_histograma_img(){
 	
 	acmPoint b1 = findBall(img1, gray1,minr,maxr,false,thScore);
 	
-	define_histograma_otimo(img1, b1);
+        setOptHistogram(img1, b1);
 	
 	/*for(int i = 0; i < NIVEL_POR_COR; i++) {
 		for(int j = 0; j < NIVEL_POR_COR; j++) {
@@ -60,14 +59,14 @@ void teste_histograma_img(){
 	
 	
 	
-		calcula_score_histograma(img2,b2);
+                calcHistogramScore(img2,b2);
 		printf("vhistogram diff = %lf\n",b2.vhistograma);
 	
 	
 		
 		printf("============================\n\n");
 	
-		define_histograma_otimo(img2, b2);
+                setOptHistogram(img2, b2);
 	
 		for(int i = 0; i < NIVEL_POR_COR; i++) {
 			for(int j = 0; j < NIVEL_POR_COR; j++) {
@@ -76,11 +75,11 @@ void teste_histograma_img(){
 				}
 			}
 		}
-		define_histograma_otimo(img1, b1);
+                setOptHistogram(img1, b1);
 	
 		vector< vector< vector< double > > > primeiro_hist = histograma_otimo;
 
-		define_histograma_otimo(img2, b2);
+                setOptHistogram(img2, b2);
 		for(int i = 0; i < NIVEL_POR_COR; i++) {
 			for(int j = 0; j < NIVEL_POR_COR; j++) {
 				for(int k = 0; k < NIVEL_POR_COR; k++) {

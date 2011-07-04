@@ -6,7 +6,6 @@
 // Percorre o arco-circular centrado em (cx,cy) de raio r no intervalo thetaRange incrementando a votação do
 // valor inc
 
-#define EPSINCCIRC 0.0000001
 
 int incCirc(int **m,int nrow,int ncol, int cx,int cy,int r, pair<double,double> thetaRange,int inc){
 
@@ -31,7 +30,7 @@ int incCirc(int **m,int nrow,int ncol, int cx,int cy,int r, pair<double,double> 
 		if(ix == antx && iy == anty) continue;
 		pcount++;
 		
-		if(m != NULL && INSIDE(ix,iy,ncol,nrow))
+                if(m != NULL && pointInsideRect(ix,iy,ncol,nrow))
 			m[iy][ix] += inc;
 			
 		antx = x;anty = y;

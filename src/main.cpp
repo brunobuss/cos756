@@ -48,7 +48,7 @@ void videoMode(char file[]) {
         
  
         if(firstFrame){
-            trackBall(grayAnt,frame,Rect(),acmPoint(),newBall,newRoiRect,globalMinR,globalMaxR,true, fAcertou);
+            trackBall(frame,Rect(),acmPoint(),newBall,newRoiRect,globalMinR,globalMaxR,true, fAcertou);
             firstFrame = false;
         }else{
         	
@@ -59,10 +59,10 @@ void videoMode(char file[]) {
 
             // Se diversas medições anteriores estavam ruins, então vamos abrir a área de busca.
             if(countRestart == 5){
-                trackBall(grayAnt,frame,roiRect,lastBall,newBall,newRoiRect,globalMinR,globalMaxR,true, fAcertou);
+                trackBall(frame,roiRect,lastBall,newBall,newRoiRect,globalMinR,globalMaxR,true, fAcertou);
                 countRestart = 0;
             }else{
-                trackBall(grayAnt,frame,roiRect,lastBall,newBall,newRoiRect, 0, 0, false, fAcertou);
+                trackBall(frame,roiRect,lastBall,newBall,newRoiRect, 0, 0, false, fAcertou);
             }
         	
         }
@@ -89,7 +89,7 @@ void videoMode(char file[]) {
 
         if(ch >= 0){
             if(ch == 'h'){ //'h' define a região circular atual como a que tem o histograma ótimo.
-                define_histograma_otimo(framecopy, newBall);
+                setOptHistogram(framecopy, newBall);
                 fAcertou = true;
             }
 
@@ -124,7 +124,7 @@ void imageMode(char file[]) {
         acmPoint ball; //Bola encontrada
         Rect roiRect; //ROI identificado
 	
-	trackBall(Mat(),img,Rect(110,105,25,25),acmPoint(),ball,roiRect,5,30,false);
+        trackBall(img,Rect(110,105,25,25),acmPoint(),ball,roiRect,5,30,false);
 
         //Desenhando a ROI e a bola encontrada.
 	circle(img,Point(ball.cx,ball.cy),ball.rad,Scalar(255,0,0),2);

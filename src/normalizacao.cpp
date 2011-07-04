@@ -1,8 +1,6 @@
 #include "main.h"
 
-//================== Calculo do valor normalizado =================================
-
-
+// Vetor com valores pré-calculados para acelerar a computação.
 int preCalcDiscP[MAXR];
 
 // mascara usada para ponderar votação em uma vizinhança
@@ -28,7 +26,7 @@ double calcVNorm(int **m,int x,int y,int nx,int ny,int rad){
 
 	for(i = -1; i<=1;i++){
 		for(j=-1;j<=1;j++){
-			if(INSIDE(x + j ,y + i,nx,ny)){
+                        if(pointInsideRect(x + j ,y + i,nx,ny)){
 				vnorm += m[y+i][x+j]*vNormMask[i+1][j+1];
 			}
 		}
