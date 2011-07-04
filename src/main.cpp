@@ -1,10 +1,15 @@
 #include "main.h"
 
-void video_mode(char file[]) {
+
+/* O programa opera em modo de vídeo,
+   abrindo o vídeo do arquivo file.
+ */
+void videoMode(char file[]) {
 
     int globalMaxR,globalMinR; 
     double thRestart;
     
+    // Definindo parametros para o programa...
     printf("Digite minr maxr e thRestart ou -1 para valores padrões\n");
     scanf(" %d",&globalMinR);
     if(globalMinR == -1){
@@ -15,28 +20,26 @@ void video_mode(char file[]) {
     	scanf(" %d %lf",&globalMaxR,&thRestart);
     }
     
-    
+    //Tenta abrir o arquivo de vídeo, caso de erro sai com código 1...
     VideoCapture cap(file); 
     if(!cap.isOpened()) 
         exit(1);
 
-    Mat gray,frame,gray2,grayAnt;
-    
-    vector<acmPoint> circles;
-    bool firstFrame = true;
-    Rect roiRect,newRoiRect;
-    acmPoint ballAt,newBall;
+    Mat frame; //Frame atual
 
-    int countRestart = 0;
-    
-    Rect inicRoi(130,175,25,25);
-    
-    //Flags
-    bool fAcertou = false;
-    bool fPause = true;
+    Rect roiRect,newRoiRect; //Retangulos que definem a ROI de busca.
 
-    char ch;
+    acmPoint lastBall,newBall; //Pontos que definem onde a bola estava no frame anterior e onde está agora.
+
+
+    int countRestart = 0; //Contador que determina quando o algoritmo deve restartar e reiniciar a busca pela bola.
     
+    //Flags de controle
+    bool firstFrame = true; //Define se é o primeiro frame, pois necessita de um tratamente especial.
+    bool fAcertou = false; //Define se acertou o histograma
+    bool fPause = true; //Define se o programa está em estado de "pause"
+    
+
     while(1)
     {
         
@@ -45,89 +48,98 @@ void video_mode(char file[]) {
         
  
         if(firstFrame){
-        	trackBall(grayAnt,frame,inicRoi,acmPoint(),newBall,newRoiRect,globalMinR,globalMaxR,true, fAcertou);
+            trackBall(grayAnt,frame,Rect(),acmPoint(),newBall,newRoiRect,globalMinR,globalMaxR,true, fAcertou);
+            firstFrame = false;
         }else{
         	
-        	if(ballAt.score_final < thRestart){
-        		countRestart++;        		
-			}else countRestart = 0;
-			
+            /*Se o score da bola encontrada estiver abaixo de nosso treshhold, então é um mal sinal... caso contrário
+             reiniciamos o contador. */
+            if(lastBall.score_final < thRestart) countRestart++;
+            else countRestart = 0;
 
-			if(countRestart == 5){
-				trackBall(grayAnt,frame,roiRect,ballAt,newBall,newRoiRect,globalMinR,globalMaxR,true, fAcertou);
-				countRestart = 0;
-		    }
-			else{
-		    		trackBall(grayAnt,frame,roiRect,ballAt,newBall,newRoiRect, 0, 0, false, fAcertou);
-		    }
+            // Se diversas medições anteriores estavam ruins, então vamos abrir a área de busca.
+            if(countRestart == 5){
+                trackBall(grayAnt,frame,roiRect,lastBall,newBall,newRoiRect,globalMinR,globalMaxR,true, fAcertou);
+                countRestart = 0;
+            }else{
+                trackBall(grayAnt,frame,roiRect,lastBall,newBall,newRoiRect, 0, 0, false, fAcertou);
+            }
         	
         }
         
-		Mat framecopy = frame.clone();
+        //Variável auxiliar, pois iremos "sujar" o frame daqui em diante.
+        Mat framecopy = frame.clone();
 
-		circle(frame,Point(newBall.cx,newBall.cy),newBall.rad,Scalar(255,0,0),2);
-		rectangle(frame,Point(newRoiRect.x,newRoiRect.y),Point(newRoiRect.x + newRoiRect.width - 1,
-		newRoiRect.y + newRoiRect.height -1),Scalar(0,255,0));
-		
+        //Desenhando a ROI e a bola encontrada.
+        circle(frame,Point(newBall.cx,newBall.cy),newBall.rad,Scalar(255,0,0),2);
+        rectangle(frame,Point(newRoiRect.x,newRoiRect.y),Point(newRoiRect.x + newRoiRect.width - 1,
+        newRoiRect.y + newRoiRect.height -1),Scalar(0,255,0));
 
-		imshow(file, frame);
-		
-		printf("cx = %d cy = %d rad = %d\n",newBall.cx,newBall.cy,newBall.rad);
+        //Mostrando tudo.
+        imshow(file, frame);
 
-		if(fAcertou && !fPause) ch = waitKey(30);
-		else ch = waitKey();
+        //Informações sobre a bola encontrada.
+        printf("cx = %d cy = %d rad = %d\n",newBall.cx,newBall.cy,newBall.rad);
+
+        //Parte que cuida da interação do usuário com o programa.
+        char ch;
+        if(fAcertou && !fPause) ch = waitKey(30);
+        else ch = waitKey();
 
 
         if(ch >= 0){
-			if(ch == 'h'){
-				define_histograma_otimo(framecopy, newBall);
-				fAcertou = true;
-			}
+            if(ch == 'h'){ //'h' define a região circular atual como a que tem o histograma ótimo.
+                define_histograma_otimo(framecopy, newBall);
+                fAcertou = true;
+            }
 
-			if(ch == 'p') {
-				if(fPause) fPause = false;
-				else fPause = true;
-			}
-			
-			if(ch == 'w'){
-				char nomeArq[128];
-				printf("Digite o nome para gravar\n");
-				scanf(" %s",nomeArq);
-				
-				imwrite(nomeArq,framecopy);
-			}
-	
-			if(ch == 'q') break;
+            if(ch == 'p') { //'p' alterna o programa em modo pausado (frame a frame) ou continuo.
+                if(fPause) fPause = false;
+                else fPause = true;
+            }
+
+            if(ch == 'w'){ //'w' salva o frame em um arquivo especificado.
+                char nomeArq[128];
+                printf("Digite o nome para gravar\n");
+                scanf(" %s",nomeArq);
+
+                imwrite(nomeArq,framecopy);
+            }
+
+            if(ch == 'q') break; //'q' termina o programa.
         }
         
-        ballAt = newBall;
+        //Salvando as informações para o próximo frame.
+        lastBall = newBall;
         roiRect = newRoiRect;
-		
-		
-	
-		grayAnt = gray.clone();
-		firstFrame = false;		
     }
 }
 
-void image_mode(char file[]) {
-	Mat gray,
-	    img = imread(file,1);
-	acmPoint ball;
-	Rect roiRect;
+
+/* O programa opera em modo de imagem,
+   lendo a figura do arquivo file.
+ */
+void imageMode(char file[]) {
+        Mat img = imread(file,1); //Imagem a ser utilizada.
+        acmPoint ball; //Bola encontrada
+        Rect roiRect; //ROI identificado
 	
 	trackBall(Mat(),img,Rect(110,105,25,25),acmPoint(),ball,roiRect,5,30,false);
 
+        //Desenhando a ROI e a bola encontrada.
 	circle(img,Point(ball.cx,ball.cy),ball.rad,Scalar(255,0,0),2);
 	rectangle(img,Point(roiRect.x,roiRect.y),Point(roiRect.x + roiRect.width - 1,roiRect.y + roiRect.height -1),Scalar(0,255,0));
 	
+        //Mostrando tudo.
 	imshow(file,img);
 	waitKey();
 }
 
-char arquivo[1024];
+char arquivo[1024]; //Nome do arquivo a ser aberto.
 int mode = -1; //0 = video, 1 = imagem, 2 = testes
 
+
+/* Função para tratar opções passadas via linha de comando */
 void parse_options(int argc, char* argv[]) {
     int option_index, option;
 
@@ -165,10 +177,10 @@ int main(int argc, char* argv[]){
     parse_options(argc, argv);
 
     if(mode == 0) {
-        video_mode(arquivo);
+        videoMode(arquivo);
     }
     else if(mode == 1) {
-        image_mode(arquivo);
+        imageMode(arquivo);
     }
     else if(mode == 2) {
 		int teste;
@@ -186,8 +198,6 @@ int main(int argc, char* argv[]){
         if(teste == 4 || teste == -1) teste_acha_circulos();
     }
     else printf("Você precisa escolher um dos modos (video, image ou tests) para executar o programa.\n");
-
- 
     return 0;
 }
 
