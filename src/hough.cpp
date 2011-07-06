@@ -109,7 +109,7 @@ void houghC1(Mat &gray, int minr, int maxr , int cannyt, vector<acmPoint> &outpu
 				vnorm = calcVNorm(acm.m[rad],j,i,acm.ncol,acm.nrow,rad + minr);
 
 				if(vnorm > thVNorm){
-					if(outputMinHeap.size() < thNCirc || outputMinHeap.begin()->vnorm < vnorm){
+                                        if(outputMinHeap.size() < thNCirc || outputMinHeap.begin()->scoreCircular < vnorm){
 						// add acmPoint
 						outputMinHeap.insert(acmPoint(rad + minr , j, i, vnorm));
 						
