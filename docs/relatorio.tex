@@ -76,12 +76,27 @@ Por final, na função ''houghC1``, durante o processo de cálculo do diversos v
 
  Dado uma ROI, para gerar o único ''acmPoint`` que indicaremos como a localização da bola utilizamos a função ''findBall``. Nesta obtemos o conjunto $B$ dos ''acmPoints`` com os $10$ maiores valores de circularidade. Os ''acmPoints`` em $B$ são submetidos a análise de histograma, se o histograma da bola foi fornecido, e então gera-se o \textit{score} final destes. Retornamos como localização da bola o ''acmPoint`` com maior \textit{score} final.
 
+ A abordagem de ROI descrita acima aumentou consideravelmente o desempenho do algoritmo já que trabalhamos só com parte da imagem. Além disso, a taxa de acerto do algoritmo também aumentou. Porém, essa estratégia introduz a problemática de que, ao errar a primeira vez, o \textit{tracking} nas iterações futuras é comprometido. De fato, nos testes, percebemos situações em que, ao primeiro erro do algoritmo, a ROI converge para uma região que não é a bola e muitas vezes sequer circular. Portanto, como última etapa do nosso trabalho, foi necessário pensar mecanismos para detectar que o algoritmo está errando e então reiniciar a busca da bola na imagem inteira. Adotamos então a solução de que ao receber por $''countRestart``=5$ iterações consecutivas um ''acmPoint`` (que supostamente é a bola) com \textit{score} final abaixo de um limite fixo ''thRestart`` então reiniciamos a busca da bola na imagem inteira. Com isso, concluimos o funcionamento geral do algoritmo.
+
 
 \section{Considerações Finais}
+ O algoritmo apresentou um desempenho relativamente bom nos testes que foram realizados. A ocorrência de erros se dá, em sua grande maioria, quando a hipotese de contraste da bola não é respeitada ou em movimentos muito rápidos, onde seu formato circular e a continuidade do movimento se perdem.
 
+ Vale observar que muitos parâmetros são utilizados no funcionamento do algoritmo como: limites do Canny, pesos de médias ponderadas, ''thNCirc``, ''thRestart``, ''deltaR``, ''scaleRad``, variação angular em torno do vetor gratiente e etc. Muitos desses parâmetros estão relacionados. Por exemplo, limites baixos para Canny fazem com que valores de circularidades sejam maiores e portanto exige um aumento no ''thRestart``. Além disso, a alteração destes parâmetros gera modificações consideraveis no comportamento do algoritmo. Sugerimos como trabalho futuro um estudo mais detalhado da relação entre esses parâmetros e melhor ajuste dos mesmos. Indicamos também a possibilidade de utlizar uma estratégia de valoração dinâmica desses.
+
+ Indicamos também como trabalho futuro a utilização de técnicas de \textit{template matching} para gerar mais um valor de similaridade com a bola e estudo de outras estratégias para reiniciar a busca.
 
 \begin{thebibliography}{99}
 
+%% http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.96.9911&rep=rep1&type=pdf
+
+%% http://vglab.sogang.ac.kr/yndk_htdocs/htdocs/papers/iciap05.pdf
+
+%% http://www.computer.org/portal/web/csdl/doi/10.1109/ICPR.2004.1333892
+
+%% http://portal.acm.org/citation.cfm?id=81200
+
+%% manual opencv
 
 
 \end{thebibliography}
