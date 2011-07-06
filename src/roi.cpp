@@ -57,7 +57,7 @@ int minr, int maxr, bool firstTime, bool filtraHistograma){
 	
 	newROI = Rect(center.x - roiScale*rad -1, center.y - roiScale*rad -1,2*roiScale*rad + 1,2*roiScale*rad + 1);
         newROI = newROI & Rect(0,0,frameGray.cols,frameGray.rows);
-	printf("vnorm = %lf\nvhist = %lf\nscore_final=%lf\nrad = %d\n",newBall.vnorm,newBall.vhistograma,
-									newBall.score_final, newBall.rad);
+        printf("vnorm = %lf\nvhist = %lf\nscore_final=%lf\nrad = %d\n",newBall.scoreCircular,newBall.scoreHistogram,
+                                                                        newBall.scoreFinal, newBall.rad);
 	
 }

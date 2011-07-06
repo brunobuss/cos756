@@ -54,7 +54,7 @@ void videoMode(char file[]) {
         	
             /*Se o score da bola encontrada estiver abaixo de nosso treshhold, então é um mal sinal... caso contrário
              reiniciamos o contador. */
-            if(lastBall.score_final < thRestart) countRestart++;
+            if(lastBall.scoreFinal < thRestart) countRestart++;
             else countRestart = 0;
 
             // Se diversas medições anteriores estavam ruins, então vamos abrir a área de busca.

@@ -106,7 +106,7 @@ void calcHistogramScore(const Mat &imagem, acmPoint &ponto) {
             }
         }
     }
-    ponto.vhistograma = score;
+    ponto.scoreHistogram = score;
 }
 
 
