@@ -1,5 +1,7 @@
 #include "main.h"
 
+/* Contem testes para as funções implementadas no trabalho */
+
 void teste_histograma_img(){
 	printf("\n ============ Teste Histograma ====================== \n");
 	

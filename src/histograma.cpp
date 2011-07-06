@@ -129,6 +129,7 @@ void calcHistogram(Mat &imagem, vector<acmPoint> &pontos) {
         it->calculaScore();
     }
 
+    //Ordena e reverte para termos os pontos com maior score final primeiro.
     sort(pontos.begin(), pontos.end());
     reverse(pontos.begin(), pontos.end());
 }

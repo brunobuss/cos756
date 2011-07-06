@@ -1,15 +1,5 @@
 #include "main.h"
 
-/* TODO
-
-- filtrar picos próximos
-- restringir busca em região de interesse 
-- fazer análise de histograma
-- usar magnitude do gradiente ( a pensar)
-- pensar em parâmetros para aplicar reiniciar o tracking
-
-*/
-
 /* Convenções:
 	- No opencv o sistema de coordenadas (até das funções geométricas) é sempre igual ao de matrizes.
 	Ou seja o ponto (x,y) é coluna x e linha y, sendo a coluna crescente da esquerda para a direita e a linha crescente
