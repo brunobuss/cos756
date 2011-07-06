@@ -1,0 +1,11 @@
+Para compilar o programa digite 'make' e o binário será gerado com o nome de trabalho.out.
+
+Para executa-lo:
+1)Em modo de vídeo, onde o programa irá (tentar) fazer um tracking contínuo durante o vídeo:
+trabalho.out -v <arquivo_de_video>
+
+2)Em modo imagem, onde o programa tentará identificar uma bola em uma imagem estática:
+trabalho.out -i <arquivo_de_imagem>
+
+3)Em modo de testes, onde o programa executará 4 testes para as funcionalidades implementadas:
+trabalho.out -t
