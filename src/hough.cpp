@@ -4,7 +4,6 @@
 	- No opencv o sistema de coordenadas (até das funções geométricas) é sempre igual ao de matrizes.
 	Ou seja o ponto (x,y) é coluna x e linha y, sendo a coluna crescente da esquerda para a direita e a linha crescente
 	do topo para baixo. Essa convenção é usada no código, intercambiando-se com a convenção (i,j) para linha i e coluna j.
-
 */
 
 // Estrutura que representa o espaço acumulador
@@ -43,6 +42,8 @@ struct acumulator{
 	}
 };
 
+
+// Flag, indica se já calculamos o vetor auxiliar ou não.
 bool inicPreCalcDiscP=false;
 
 // dado vetor gradiente (dx,dy) e variação angular delta calcula o intervalo de ângulo de tamanho delta
@@ -58,10 +59,10 @@ pair<double,double> calcThetaRange(double dx,double dy,double delta = 2*pi){
 	return pair<double,double>(ti,tf);
 }
 
-// Dado imagem em escala de cinza gray, menor raio a ser buscado minr, maior raio a ser buscado maxr,
-// treshold usado para Canny cannyt. Preenche o vetor output com os picos achados no espaço acumulador.
-// São retornados os maiores thNCirc picos que tem valor normalizado acima de thVNorm. 
-
+/* Dado imagem em escala de cinza 'gray', o menor raio a ser buscado 'minr', o maior raio a ser buscado 'maxr',
+   treshold usado para Canny 'cannyt'. Preenche o vetor output com os picos achados no espaço acumulador.
+   São retornados os maiores 'thNCirc' picos que tem valor normalizado acima de 'thVNorm'.
+ */
 void houghC1(Mat &gray, int minr, int maxr , int cannyt, vector<acmPoint> &output, unsigned int thNCirc, double thVNorm){
 	Mat edges,Ix,Iy;
 	double deltaTheta = 0.79/2; // 45/2 graus
@@ -69,9 +70,15 @@ void houghC1(Mat &gray, int minr, int maxr , int cannyt, vector<acmPoint> &outpu
 	pair<double,double> dTheta;
 	set<acmPoint> outputMinHeap;
 	
+        //Limpando o vetor, só para garantir.
 	output.clear();
 		
+        //Canny para detectar arestas.
 	Canny(gray,edges,cannyt,cannyt/(1.2),3,true);	
+
+        //Sobel para determinar os gradientes.
+        //Estamos supondo que a cor da bola é mais clara que o fundo, logo o gradiente
+        //estará apontando para o interior da bola.
 	Sobel(gray,Ix,DataType<double>::depth,1,0,3,((double)1)/(8*255)); // [-0.5, 0.5]
 	Sobel(gray,Iy,DataType<double>::depth,0,1,3,((double)1)/(8*255)); // [-0.5, 0.5]
 	
@@ -79,6 +86,7 @@ void houghC1(Mat &gray, int minr, int maxr , int cannyt, vector<acmPoint> &outpu
 	
 	acumulator acm(maxr - minr + 1, edges.rows, edges.cols,minr,maxr);
 	
+        //Para cada raio possível iremos fazer a votação.
 	for(rad = minr; rad <= maxr; rad++){
 		for(i=0;i<edges.rows;i++){
 			const uchar* edgesl = edges.ptr<uchar>(i);
@@ -97,20 +105,21 @@ void houghC1(Mat &gray, int minr, int maxr , int cannyt, vector<acmPoint> &outpu
 	
 	double vnorm;
 	
+        //Se ainda não calculamos nosso vetor auxiliar, então fazemos isso agora.
 	if(!inicPreCalcDiscP){
 		fillPreCalcDiscP();
 		inicPreCalcDiscP = true;
 	}
 	
+        //Guardamos em 'outputMinHeap' os 'thNCirc' candidatos com maior
+        //valor de circularidade.
 	for(rad=0;rad<acm.nrad;rad++){
-//		printf("rad = %d\n",rad + minr);
 		for(i=0;i<acm.nrow;i++){
 			for(j=0;j<acm.ncol;j++){
 				vnorm = calcVNorm(acm.m[rad],j,i,acm.ncol,acm.nrow,rad + minr);
 
 				if(vnorm > thVNorm){
                                         if(outputMinHeap.size() < thNCirc || outputMinHeap.begin()->scoreCircular < vnorm){
-						// add acmPoint
 						outputMinHeap.insert(acmPoint(rad + minr , j, i, vnorm));
 						
 						if(outputMinHeap.size() > thNCirc){
@@ -118,17 +127,14 @@ void houghC1(Mat &gray, int minr, int maxr , int cannyt, vector<acmPoint> &outpu
 						}
 					} 
 				}
-				
-//				printf("%d(%.4lf)  ",acm.m[rad][i][j],vnorm);
 			}
-//			printf("\n");
 		}
-//		printf("\n");
 	}
 	
+        //Revertemos a heap e salvamos no vetor 'output', para que
+        //o candidato com o maior score circular fique no início.
 	set<acmPoint>::reverse_iterator rit;
 	for(rit = outputMinHeap.rbegin(); rit != outputMinHeap.rend(); ++rit){
 		output.push_back(*rit);
 	}
-	
 }
