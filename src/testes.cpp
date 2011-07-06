@@ -1,5 +1,7 @@
 #include "main.h"
 
+/* Contem testes para as funções implementadas no trabalho */
+
 void teste_histograma_img(){
 	printf("\n ============ Teste Histograma ====================== \n");
 	
@@ -60,7 +62,7 @@ void teste_histograma_img(){
 	
 	
                 calcHistogramScore(img2,b2);
-		printf("vhistogram diff = %lf\n",b2.vhistograma);
+                printf("vhistogram diff = %lf\n",b2.scoreHistogram);
 	
 	
 		
@@ -259,7 +261,7 @@ void teste_acha_circulos(){
 			acmPoint ball = circles[i];
 		
 			circle(img,Point(ball.cx,ball.cy),ball.rad,Scalar(255,0,0),2);
-			printf("cx = %d cy = %d rad = %d vnorm = %lf\n",ball.cx,ball.cy,ball.rad,ball.vnorm);  
+                        printf("cx = %d cy = %d rad = %d vnorm = %lf\n",ball.cx,ball.cy,ball.rad,ball.scoreCircular);
 		}
 	
 		imshow("",img);waitKey();

@@ -106,7 +106,7 @@ void calcHistogramScore(const Mat &imagem, acmPoint &ponto) {
             }
         }
     }
-    ponto.vhistograma = score;
+    ponto.scoreHistogram = score;
 }
 
 
@@ -119,16 +119,17 @@ void calcHistogram(Mat &imagem, vector<acmPoint> &pontos) {
 
     for(it = pontos.begin(); it != pontos.end(); ++it) {
         calcHistogramScore(imagem, *it);
-        if(maior_score < it->vhistograma || maior_score == -1) maior_score = it->vhistograma;
+        if(maior_score < it->scoreHistogram || maior_score == -1) maior_score = it->scoreHistogram;
     }
 
     //Normaliza:
     for(it = pontos.begin(); it != pontos.end(); ++it) {
-        it->vhistograma = 1 - (it->vhistograma/maior_score);
-        if(it->vhistograma < 0.0) it->vhistograma = 0.0;
+        it->scoreHistogram = 1 - (it->scoreHistogram/maior_score);
+        if(it->scoreHistogram < 0.0) it->scoreHistogram = 0.0;
         it->calculaScore();
     }
 
+    //Ordena e reverte para termos os pontos com maior score final primeiro.
     sort(pontos.begin(), pontos.end());
     reverse(pontos.begin(), pontos.end());
 }

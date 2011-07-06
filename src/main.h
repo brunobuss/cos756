@@ -50,9 +50,9 @@ inline bool pointInsideRect(int const& x, int const& y, int const& nx, int const
 
 //Estrutura que representa uma possível resposta no espaço de busca.
 struct acmPoint{
-        double vnorm; // valor normalizado da votação de circularidade do ponto
-	double vhistograma; // score com base na comparação de histograma
-        double score_final; // score final com base nos dois scores anteriores
+        double scoreCircular; // valor normalizado da votação de circularidade do ponto
+        double scoreHistogram; // score com base na comparação de histograma
+        double scoreFinal; // score final com base nos dois scores anteriores
 	
 	int rad,cx,cy; // raio, centro (cx,cy)
 
@@ -62,20 +62,20 @@ struct acmPoint{
 	
 	acmPoint(int rad_, int cx_,int cy_, double vnorm_ = 0){
 		rad = rad_; cx = cx_; cy = cy_;
-		score_final = vnorm = vnorm_;
-		vhistograma = 0.0;
+                scoreFinal = scoreCircular = vnorm_;
+                scoreHistogram = 0.0;
 		inic = true;
 	}
 
 	void calculaScore(){
 		if(rad < 5)
-			score_final =  0.4 * vnorm + 0.6 * vhistograma;
+                        scoreFinal =  0.4 * scoreCircular + 0.6 * scoreHistogram;
 		else
-			score_final =  0.2 * vnorm + 0.8 * vhistograma;
+                        scoreFinal =  0.2 * scoreCircular + 0.8 * scoreHistogram;
 	}
 	
 	inline bool operator< (const acmPoint &p) const{
-		return (score_final < p.score_final);
+                return (scoreFinal < p.scoreFinal);
 	}
 };
 

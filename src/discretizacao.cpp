@@ -5,8 +5,6 @@
 // Dado matriz (2d) de votação m com dimensão nrow x ncol.
 // Percorre o arco-circular centrado em (cx,cy) de raio r no intervalo thetaRange incrementando a votação do
 // valor inc
-
-
 int incCirc(int **m,int nrow,int ncol, int cx,int cy,int r, pair<double,double> thetaRange,int inc){
 
 	double theta = thetaRange.first;
@@ -16,7 +14,6 @@ int incCirc(int **m,int nrow,int ncol, int cx,int cy,int r, pair<double,double> 
 	double h = sqrt(r*r + 0.35);
 	double step = acos(r/h);
  
-//	printf("%lf\n",step);
 	double x,y;
 	int ix,iy,antx=-INF,anty=-INF;
 	int pcount=0;
